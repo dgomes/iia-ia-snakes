@@ -3,7 +3,7 @@ from pygame.locals import *
 from sys import exit
 import math
 
-fps=150 #frames per second. The higher, the harder
+fps=50 #frames per second. The higher, the harder
 #direction of snake
 left=-1,0
 right=1,0

@@ -2,8 +2,8 @@ from snake import Snake
 from constants import *
 
 class ComputerSnake(Snake):
-    def __init__(self,body=[(0,0)] , direction=(1,0),color=(255,0,0),speed=1):
-        super().__init__(body,direction,color,speed)
+    def __init__(self,body=[(0,0)] , direction=(1,0),color=(255,0,0)):
+        super().__init__(body,direction,color)
     def pathlen(self,a,b):
         return int( ((a[0]-b[0])**2 + (a[1]-b[1])**2 )**0.5)
     def add(self,a,b):

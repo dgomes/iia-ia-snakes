@@ -85,7 +85,7 @@ class SnakeGame:
             self.GenerateFood() #generate food if necessary
             for player in [a for a in self.players if not a.IsDead]:
                 player.UpdateDirection(self) #update game logic (only for alive players)
-            for player in [a for a in self.players if  count%a.speed == 0]:
+            for player in self.players:
                 player.Update(self)
             #print all the content in the screen
             for player in self.players:
@@ -98,7 +98,7 @@ class SnakeGame:
 #start the game
 if(__name__ == "__main__"):
     snake=SnakeGame()
-    snake.SetObstacles(15) #level of obstacles
+    snake.SetObstacles(50) #level of obstacles
     snake.setplayers([  
     #HumanSnake([(12,14)])
     #,ComputerSnake(),

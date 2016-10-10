@@ -1,8 +1,7 @@
 from constants import *
 
 class Snake:
-    def __init__(self,body , direction, color,speed):
-        self.speed=speed
+    def __init__(self,body , direction, color):
         self.body=body #initially located here
         self.color=color
         self.direction=self.newdirection=direction

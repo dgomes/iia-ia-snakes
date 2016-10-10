@@ -3,7 +3,7 @@ from constants import *
 
 class HumanSnake(Snake):
     def __init__(self,body=[(0,0)] , direction=(1,0),upkey=K_UP,downkey=K_DOWN,rightkey=K_RIGHT,leftkey=K_LEFT,color=(0,255,0)):
-        super().__init__(body,direction,color,1)#speed is always 1
+        super().__init__(body,direction,color)
         #assign the keys to control the human snake
         self.upkey=upkey
         self.downkey=downkey
