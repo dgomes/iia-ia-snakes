@@ -1,14 +1,15 @@
 from snake import Snake
+from pygame.locals import *
 from constants import *
 
 class HumanSnake(Snake):
-    def __init__(self,body=[(0,0)] , direction=(1,0),upkey=K_UP,downkey=K_DOWN,rightkey=K_RIGHT,leftkey=K_LEFT,color=(0,255,0)):
-        super().__init__(body,direction,color)
+    def __init__(self,body=[(0,0)] , direction=(1,0)):
+        super().__init__(body,direction,name="Human")
         #assign the keys to control the human snake
-        self.upkey=upkey
-        self.downkey=downkey
-        self.rightkey=rightkey
-        self.leftkey=leftkey
+        self.upkey=K_UP
+        self.downkey=K_DOWN
+        self.rightkey=K_RIGHT
+        self.leftkey=K_LEFT
         
     def processkey(self,key):
         #we check the old direction not the new direction.
