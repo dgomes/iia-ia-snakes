@@ -1,4 +1,4 @@
-from server import *
+from game import *
 from human import HumanSnake
 from agent1 import ComputerSnake
 
