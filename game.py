@@ -6,7 +6,7 @@ import copy
 from sys import exit
 import pygame,random
 from pygame.locals import *
-
+import constants
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
       
@@ -40,8 +40,8 @@ class SnakeGame:
         #load the font
         self.font = pygame.font.Font(None, 30)
         self.obstacles=[]
-        self.obscolor=(0,0,255)
-        self.foodcolor=(100,100,100)
+        self.obscolor=(139,69,19)
+        self.foodcolor=(0,255,0)
         self.foodpos=(0,0)
         self.fps=fps #frames per second. The higher, the harder
 
@@ -64,7 +64,7 @@ class SnakeGame:
                     self.obstacles.append(lo)
 
     def setplayers(self,players):
-        self.players=[Player(p,(random.choice([255,0]), random.choice([255,0]), random.choice([255,0]))) for p in players]
+        self.players=[Player(p,random.choice(constants.colours)) for p in players]
     
     def printstatus(self):
         if len(self.players) >1:
