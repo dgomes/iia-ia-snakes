@@ -3,6 +3,7 @@
 # Diogo Gomes <dgomes@av.it.pt>
 
 import copy
+from collections import namedtuple
 from sys import exit
 import pygame,random
 from pygame.locals import *
@@ -23,9 +24,13 @@ class Player:
         self.name = agent.name
         self.color = color 
         self.IsDead = False
+        self.points = 0
     def kill(self):
         self.IsDead = True
         self.agent.IsDead = True
+    def point(self, point):
+        self.points+=point
+        self.agent.points+=point
 
 class SnakeGame:
     def __init__(self, hor=60, ver=40, tilesize=20, fps=50):
@@ -65,25 +70,36 @@ class SnakeGame:
 
     def setplayers(self,players):
         self.players=[Player(p,random.choice(constants.colours)) for p in players]
-    
+        self.dead=[]
+
     def printstatus(self):
-        if len(self.players) >1:
-            players = [p.name for p in self.players]
-        
-            text=self.font.render(players[0],1,self.players[0].color)
-            textpos = text.get_rect(x=self.tilesize,y=(self.verttiles+1)*self.tilesize)
-            self.screen.blit(text, textpos)
-            text=self.font.render(players[1],1,self.players[1].color)
-            textpos = text.get_rect(x=self.screen.get_width()-self.tilesize-self.font.size(players[1])[0],y=(self.verttiles+1)*self.tilesize)
-            self.screen.blit(text, textpos)
-            
-            text = self.font.render("{} vs {}".format(players[0], players[1]), 1,(255,255,255))
-        elif len(self.players) >0:
-            text=self.font.render("{} is the Winner!".format(self.players[0].name),1,self.players[0].color)
-        else:
-            text=self.font.render("All dead...",1,(255,0,0))
+        PlayerStat = namedtuple('PlayerStat', 'name color points')
+        players = [PlayerStat(p.name, p.color, p.points) for p in self.players + self.dead]
+       
+        score = "{} vs {}".format(players[0].points, players[1].points)
+        text = self.font.render(score, 1,(255,255,255))
         textpos = text.get_rect(centerx=self.screen.get_width()/2,y=(self.verttiles+1)*self.tilesize)
+
+
+        player1_name=self.font.render(players[0].name,1,players[0].color)
+        player1_pos = player1_name.get_rect(x=self.screen.get_width()/2 - self.font.size(score + players[0].name)[0],y=(self.verttiles+1)*self.tilesize)
+
+        player2_name=self.font.render(players[1].name,1,players[1].color)
+        player2_pos = player2_name.get_rect(x=self.screen.get_width()/2 + self.font.size(score)[0],y=(self.verttiles+1)*self.tilesize)
+            
+        
+        self.screen.blit(player1_name, player1_pos)
+        self.screen.blit(player2_name, player2_pos)
         self.screen.blit(text, textpos)
+      
+        text=None
+        if len(self.players) == 1:
+            text=self.font.render("{} is the Winner!".format(self.players[0].name),1,self.players[0].color)
+        elif len(self.players) == 0:
+            text=self.font.render("All dead...",1,(255,0,0))
+        if text != None:
+            textpos = text.get_rect(centerx=self.screen.get_width()/2,centery=self.screen.get_height()/2)
+            self.screen.blit(text, textpos)
     
     def UpdatePlayerInfo(self):
         #update where the players are in the board just before updating the logic
@@ -94,6 +110,7 @@ class SnakeGame:
     def Update(self,snake):
         if snake.IsDead:
             self.players.remove(snake)
+            self.dead.append(snake)
             logging.info("Player <{}> is dead".format(snake.name))
             return
         #updates the snake...
@@ -118,6 +135,7 @@ class SnakeGame:
             #the snake ate the food
             self.foodpos=0,0
             snake.body.append((snake.body[0]))
+            snake.point(10)
         #the snake hasnot collided....move along
         snake.body=[head]+snake.body[:-1]
 

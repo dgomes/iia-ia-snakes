@@ -7,6 +7,7 @@ class Snake:
         self.name=name
         self.direction=self.newdirection=direction
         self.IsDead=False
+        self.points = 0
         logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.DEBUG)
     def UpdateDirection(self,game):
         self.direction=self.newdirection #the next direction is stored in newdirection....logic is updated here
