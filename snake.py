@@ -9,7 +9,7 @@ class Snake:
         self.IsDead=False
         self.points = 0
         logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.DEBUG)
-    def UpdateDirection(self,game):
+    def updateDirection(self,game):
         self.direction=self.newdirection #the next direction is stored in newdirection....logic is updated here
     def processkey(self,key):
         pass #nothing to do here it is just to support human players

@@ -50,13 +50,13 @@ class SnakeGame:
         self.foodpos=(0,0)
         self.fps=fps #frames per second. The higher, the harder
 
-    def GenerateFood(self):
+    def generateFood(self):
         if self.foodpos == (0,0):
             self.foodpos=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles)
             while (self.foodpos in self.playerpos or self.foodpos in self.obstacles):
                 self.foodpos=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles)
 
-    def SetObstacles(self,level):
+    def setObstacles(self,level):
         for i in range(1,level+1):
             lo=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles) #last obstacle
             self.obstacles.append(lo)
@@ -101,13 +101,13 @@ class SnakeGame:
             textpos = text.get_rect(centerx=self.screen.get_width()/2,centery=self.screen.get_height()/2)
             self.screen.blit(text, textpos)
     
-    def UpdatePlayerInfo(self):
+    def updatePlayerInfo(self):
         #update where the players are in the board just before updating the logic
         self.playerpos=[]
         for player in self.players:
             self.playerpos+=player.body
 
-    def Update(self,snake):
+    def update(self,snake):
         if snake.IsDead:
             self.players.remove(snake)
             self.dead.append(snake)
@@ -155,13 +155,13 @@ class SnakeGame:
             count+=1
             self.screen.fill((0,0,0))
             #game logic is updated in the code below
-            self.UpdatePlayerInfo()
-            self.GenerateFood() #generate food if necessary
+            self.updatePlayerInfo()
+            self.generateFood() #generate food if necessary
             for player in [a for a in self.players if not a.IsDead]:
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server) 
-                player.agent.UpdateDirection(maze) #update game logic (only for alive players)
+                player.agent.updateDirection(maze) #update game logic (only for alive players)
             for player in self.players:
-                self.Update(player)
+                self.update(player)
             #print all the content in the screen
             for player in self.players: #print players
                 for part in player.body:
