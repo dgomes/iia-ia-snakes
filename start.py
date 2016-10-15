@@ -7,7 +7,7 @@ if __name__ == "__main__":
     snake=SnakeGame(hor=60, ver=40, fps=20)
     snake.setObstacles(15) #level of obstacles
     snake.setplayers([  
-        Agent1([(60,40)]),
+        Agent1([(40,30)]),
         Agent1(),
     ])
     snake.start()
