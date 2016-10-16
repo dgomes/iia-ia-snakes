@@ -158,8 +158,9 @@ class SnakeGame:
             self.updatePlayerInfo()
             self.generateFood() #generate food if necessary
             for player in [a for a in self.players if not a.IsDead]:
-                maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server) 
+                maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
+                player.agent.update([(a.name, a.points) for a in self.players]) #update game logic (only for alive players)
             for player in self.players:
                 self.update(player)
             #print all the content in the screen

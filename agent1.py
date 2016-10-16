@@ -8,6 +8,8 @@ class Agent1(Snake):
         return int( ((a[0]-b[0])**2 + (a[1]-b[1])**2 )**0.5)
     def add(self,a,b):
         return a[0]+b[0],a[1]+b[1]
+    def update(self,players_points):
+        pass
     def updateDirection(self,maze):
         #this is the brain of the snake player
         olddir=self.direction
