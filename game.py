@@ -69,7 +69,12 @@ class SnakeGame:
                     self.obstacles.append(lo)
 
     def setplayers(self,players):
-        self.players=[Player(p,random.choice(constants.colours)) for p in players]
+        self.players=[]
+        colors = [c for c in constants.colours if c not in [self.obscolor, self.foodcolor]]
+        for p in players:
+            c = random.choice(colors)
+            colors.remove(c)
+            self.players+=[Player(p,c)]
         self.dead=[]
 
     def printstatus(self):
