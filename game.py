@@ -56,6 +56,12 @@ class SnakeGame:
             while (self.foodpos in self.playerpos or self.foodpos in self.obstacles):
                 self.foodpos=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles)
 
+    def playerPos(self):
+        pos = random.randrange(1, self.hortiles), random.randrange(1, self.verttiles)
+        while (pos in self.obstacles):
+            pos = random.randrange(1, self.hortiles), random.randrange(1, self.verttiles)
+        return pos
+    
     def setObstacles(self,level):
         for i in range(1,level+1):
             lo=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles) #last obstacle
@@ -68,7 +74,7 @@ class SnakeGame:
                 if 0<lo[0]<=self.hortiles and 0<lo[1]<=self.verttiles :
                     self.obstacles.append(lo)
 
-    def setplayers(self,players):
+    def setPlayers(self,players):
         self.players=[]
         colors = [c for c in constants.colours if c not in [self.obscolor, self.foodcolor]]
         for p in players:
@@ -165,7 +171,7 @@ class SnakeGame:
             for player in [a for a in self.players if not a.IsDead]:
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
-                player.agent.update([(a.name, a.points) for a in self.players]) #update game logic (only for alive players)
+                player.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=count) #update game logic (only for alive players)
             for player in self.players:
                 self.update(player)
             #print all the content in the screen
