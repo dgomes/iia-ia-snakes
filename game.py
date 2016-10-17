@@ -39,7 +39,7 @@ class SnakeGame:
         self.tilesize=tilesize  #tile size, adjust according to screen size
         self.hortiles=hor   #number of horizontal tiles
         self.verttiles=ver  #number of vertical tiles
-        self.screen = pygame.display.set_mode(((self.hortiles+1)*self.tilesize,(self.verttiles+1)*self.tilesize+25))
+        self.screen = pygame.display.set_mode(((self.hortiles+1)*self.tilesize,(self.verttiles+1)*self.tilesize+25), pygame.RESIZABLE)
         pygame.display.set_caption('Python Snake')
         
         #load the font
@@ -163,6 +163,9 @@ class SnakeGame:
                 elif event.type == pygame.KEYDOWN:
                     for player in self.players:
                         player.agent.processkey(event.key)
+                elif event.type == pygame.VIDEORESIZE:
+                        self.tilesize = int(max(event.w/(self.hortiles+1), event.h/(self.verttiles+1)))
+                        self.screen = pygame.display.set_mode(((self.hortiles+1)*self.tilesize,(self.verttiles+1)*self.tilesize+25), pygame.RESIZABLE)
             count+=1
             self.screen.fill((0,0,0))
             #game logic is updated in the code below
