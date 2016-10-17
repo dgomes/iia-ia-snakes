@@ -30,8 +30,7 @@ class Agent1(Snake):
             newpos=self.add(position,dir)
             newlen=self.pathlen(newpos , maze.foodpos)#length in shortest path
             if newlen < shortest:
-                if not ( newpos in maze.obstacles or newpos in maze.playerpos):
-                    olddir=dir
-                    shortest=newlen
+                olddir=dir
+                shortest=newlen
         self.direction=olddir
  
