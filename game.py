@@ -117,6 +117,7 @@ class SnakeGame:
         self.playerpos=[]
         for player in self.players:
             self.playerpos+=player.body
+            player.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=self.count) #update game logic (only for alive players)
 
     def update(self,snake):
         if snake.IsDead:
@@ -153,7 +154,7 @@ class SnakeGame:
         snake.agent.body = copy.deepcopy(snake.body)
     def start(self):
         clock = pygame.time.Clock()
-        count=0
+        self.count=0
         while True:
             clock.tick(self.fps)
             for event in pygame.event.get():
@@ -166,7 +167,7 @@ class SnakeGame:
                 elif event.type == pygame.VIDEORESIZE:
                         self.tilesize = int(max(event.w/(self.hortiles+1), event.h/(self.verttiles+1)))
                         self.screen = pygame.display.set_mode(((self.hortiles+1)*self.tilesize,(self.verttiles+1)*self.tilesize+25), pygame.RESIZABLE)
-            count+=1
+            self.count+=1
             self.screen.fill((0,0,0))
             #game logic is updated in the code below
             self.updatePlayerInfo()
@@ -174,7 +175,6 @@ class SnakeGame:
             for player in [a for a in self.players if not a.IsDead]:
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
-                player.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=count) #update game logic (only for alive players)
             for player in self.players:
                 self.update(player)
             #print all the content in the screen
