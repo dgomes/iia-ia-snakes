@@ -62,17 +62,25 @@ class SnakeGame:
             pos = random.randrange(1, self.hortiles), random.randrange(1, self.verttiles)
         return pos
     
-    def setObstacles(self,level):
-        for i in range(1,level+1):
-            lo=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles) #last obstacle
-            self.obstacles.append(lo)
-            for j in range(1,random.randint(1,int(level/2))):
-                if random.randint(1,2) == 1:
-                    lo=(lo[0]+1,lo[1])
-                else:
-                    lo=(lo[0],lo[1]+1)
-                if 0<lo[0]<=self.hortiles and 0<lo[1]<=self.verttiles :
-                    self.obstacles.append(lo)
+    def setObstacles(self,level, filename=None):
+        if filename != None:
+            image = pygame.image.load(filename)
+            pxarray = pygame.PixelArray(image)
+            for x in range(len(pxarray)):
+                for y in range(len(pxarray[x])):
+                    if pxarray[x][y] != 0:
+                        self.obstacles.append((x, y))
+        else:
+            for i in range(1,level+1):
+                lo=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles) #last obstacle
+                self.obstacles.append(lo)
+                for j in range(1,random.randint(1,int(level/2))):
+                    if random.randint(1,2) == 1:
+                        lo=(lo[0]+1,lo[1])
+                    else:
+                        lo=(lo[0],lo[1]+1)
+                    if 0<lo[0]<=self.hortiles and 0<lo[1]<=self.verttiles :
+                        self.obstacles.append(lo)
 
     def setPlayers(self,players):
         self.players=[]
