@@ -181,8 +181,12 @@ class SnakeGame:
             self.updatePlayerInfo()
             self.generateFood() #generate food if necessary
             for player in [a for a in self.players if not a.IsDead]:
+                s = pygame.time.get_ticks()
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
+                f = pygame.time.get_ticks()
+                if f-s > self.fps/2:
+                    player.point(-10)   #we penalize players that take longer then a half a tick§
             for player in self.players:
                 self.update(player)
             #print all the content in the screen
