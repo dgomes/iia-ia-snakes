@@ -198,6 +198,11 @@ class SnakeGame:
                 pygame.draw.rect(self.screen,self.obscolor,(obstacle[0]*self.tilesize,obstacle[1]*self.tilesize,self.tilesize,self.tilesize),0)
 
             #print food
+            run = [-1,1,0]
+            self.foodpos= self.foodpos[0] + random.choice(run),  self.foodpos[1] + random.choice(run),
+            while (self.foodpos in self.playerpos or self.foodpos in self.obstacles or self.foodpos[0] > self.hortiles or self.foodpos[1] > self.verttiles or self.foodpos[0] < 0 or self.foodpos[1] < 0):
+                self.foodpos= self.foodpos[0] + random.choice(run),  self.foodpos[1] + random.choice(run),
             pygame.draw.rect(self.screen,self.foodcolor,(self.foodpos[0]*self.tilesize,self.foodpos[1]*self.tilesize,self.tilesize,self.tilesize),0)
+ 
             self.printstatus()
             pygame.display.update()
