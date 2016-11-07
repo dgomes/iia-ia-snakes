@@ -185,7 +185,9 @@ class SnakeGame:
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
                 f = pygame.time.get_ticks()
-                if f-s > self.fps/2:
+                
+                logging.debug("Player <{}> took {}".format(player.name, f-s))
+                if f-s > (1/self.fps)/2:
                     player.point(-10)   #we penalize players that take longer then a half a tick§
             for player in self.players:
                 self.update(player)
