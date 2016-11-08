@@ -125,7 +125,7 @@ class SnakeGame:
         self.playerpos=[]
         for player in self.players:
             self.playerpos+=player.body
-            player.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=self.count) #update game logic (only for alive players)
+            player.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=self.count, agent_time=1000*(1/self.fps)/2) #update game logic (only for alive players)
 
     def update(self,snake):
         if snake.IsDead:
@@ -187,7 +187,7 @@ class SnakeGame:
                 f = pygame.time.get_ticks()
                 
                 logging.debug("Player <{}> took {}".format(player.name, f-s))
-                if f-s > (1/self.fps)/2:
+                if f-s > 1000*(1/self.fps)/2:
                     player.point(-10)   #we penalize players that take longer then a half a tick§
             for player in self.players:
                 self.update(player)
