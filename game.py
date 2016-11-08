@@ -186,8 +186,8 @@ class SnakeGame:
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
                 f = pygame.time.get_ticks()
                 
-                logging.debug("Player <{}> took {}".format(player.name, f-s))
                 if f-s > 1000*(1/self.fps)/2:
+                    logging.debug("Player <{}> took {}".format(player.name, f-s))
                     player.point(-10)   #we penalize players that take longer then a half a tick§
             for player in self.players:
                 self.update(player)
@@ -201,9 +201,16 @@ class SnakeGame:
 
             #print food
             run = [-1,1,0]
+            limit = 0
+            oldfoodpos = self.foodpos
             self.foodpos= self.foodpos[0] + random.choice(run),  self.foodpos[1] + random.choice(run),
             while (self.foodpos in self.playerpos or self.foodpos in self.obstacles or self.foodpos[0] > self.hortiles or self.foodpos[1] > self.verttiles or self.foodpos[0] < 0 or self.foodpos[1] < 0):
-                self.foodpos= self.foodpos[0] + random.choice(run),  self.foodpos[1] + random.choice(run),
+                self.foodpos= self.foodpos[0] + random.choice(run),  self.foodpos[1] + random.choice(run)
+                limit += 1
+                if limit > 100:
+                    logging.debug("Can't place food")
+                    self.foodpos = oldfoodpos
+                    break
             pygame.draw.rect(self.screen,self.foodcolor,(self.foodpos[0]*self.tilesize,self.foodpos[1]*self.tilesize,self.tilesize,self.tilesize),0)
  
             self.printstatus()
