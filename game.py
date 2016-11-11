@@ -39,7 +39,7 @@ class SnakeGame:
         self.tilesize=tilesize  #tile size, adjust according to screen size
         self.hortiles=hor   #number of horizontal tiles
         self.verttiles=ver  #number of vertical tiles
-        self.screen = pygame.display.set_mode(((self.hortiles+1)*self.tilesize,(self.verttiles+1)*self.tilesize+25), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode(((self.hortiles)*self.tilesize,(self.verttiles)*self.tilesize+25), pygame.RESIZABLE)
         pygame.display.set_caption('Python Snake')
         
         #load the font
@@ -97,14 +97,14 @@ class SnakeGame:
        
         score = "{} vs {}".format(players[0].points, players[1].points)
         text = self.font.render(score, 1,(255,255,255))
-        textpos = text.get_rect(centerx=self.screen.get_width()/2,y=(self.verttiles+1)*self.tilesize)
+        textpos = text.get_rect(centerx=self.screen.get_width()/2,y=(self.verttiles)*self.tilesize)
 
 
         player1_name=self.font.render(players[0].name,1,players[0].color)
-        player1_pos = player1_name.get_rect(x=self.screen.get_width()/2 - self.font.size(score + players[0].name)[0],y=(self.verttiles+1)*self.tilesize)
+        player1_pos = player1_name.get_rect(x=self.screen.get_width()/2 - self.font.size(score + players[0].name)[0],y=(self.verttiles)*self.tilesize)
 
         player2_name=self.font.render(players[1].name,1,players[1].color)
-        player2_pos = player2_name.get_rect(x=self.screen.get_width()/2 + self.font.size(score)[0],y=(self.verttiles+1)*self.tilesize)
+        player2_pos = player2_name.get_rect(x=self.screen.get_width()/2 + self.font.size(score)[0],y=(self.verttiles)*self.tilesize)
             
         
         self.screen.blit(player1_name, player1_pos)
@@ -173,8 +173,8 @@ class SnakeGame:
                     for player in self.players:
                         player.agent.processkey(event.key)
                 elif event.type == pygame.VIDEORESIZE:
-                        self.tilesize = int(max(event.w/(self.hortiles+1), event.h/(self.verttiles+1)))
-                        self.screen = pygame.display.set_mode(((self.hortiles+1)*self.tilesize,(self.verttiles+1)*self.tilesize+25), pygame.RESIZABLE)
+                        self.tilesize = int(max(event.w/(self.hortiles), event.h/(self.verttiles)))
+                        self.screen = pygame.display.set_mode(((self.hortiles)*self.tilesize,(self.verttiles)*self.tilesize+25), pygame.RESIZABLE)
             self.count+=1
             self.screen.fill((0,0,0))
             #game logic is updated in the code below
