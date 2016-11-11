@@ -52,9 +52,9 @@ class SnakeGame:
 
     def generateFood(self):
         if self.foodpos == (0,0):
-            self.foodpos=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles)
+            self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
             while (self.foodpos in self.playerpos or self.foodpos in self.obstacles):
-                self.foodpos=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles)
+                self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
 
     def playerPos(self):
         pos = random.randrange(1, self.hortiles), random.randrange(1, self.verttiles)
@@ -201,16 +201,10 @@ class SnakeGame:
 
             #print food
             run = [-1,1,0]
-            limit = 0
-            oldfoodpos = self.foodpos
-            self.foodpos= self.foodpos[0] + random.choice(run),  self.foodpos[1] + random.choice(run),
-            while (self.foodpos in self.playerpos or self.foodpos in self.obstacles or self.foodpos[0] > self.hortiles or self.foodpos[1] > self.verttiles or self.foodpos[0] < 0 or self.foodpos[1] < 0):
-                self.foodpos= self.foodpos[0] + random.choice(run),  self.foodpos[1] + random.choice(run)
-                limit += 1
-                if limit > 100:
-                    logging.debug("Can't place food")
-                    self.foodpos = oldfoodpos
-                    break
+            neighbours = [((self.foodpos[0] + x)%self.hortiles, (self.foodpos[1] + y)%self.verttiles) for x in run for y in run]
+            valid_neighbours = [n for n in neighbours if not n in self.obstacles or n in self.playerpos] 
+            self.foodpos = random.choice(valid_neighbours)
+
             pygame.draw.rect(self.screen,self.foodcolor,(self.foodpos[0]*self.tilesize,self.foodpos[1]*self.tilesize,self.tilesize,self.tilesize),0)
  
             self.printstatus()
