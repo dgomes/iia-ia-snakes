@@ -28,9 +28,11 @@ class Player:
     def kill(self):
         self.IsDead = True
         self.agent.IsDead = True
+        logging.info("Player <{}> died".format(self.name))
     def point(self, point):
         self.points+=point
         self.agent.points+=point
+        logging.info("Player <{}> points: {}".format(self.name, self.points))
 
 class SnakeGame:
     def __init__(self, hor=60, ver=40, tilesize=20, fps=50):
@@ -72,14 +74,14 @@ class SnakeGame:
                         self.obstacles.append((x, y))
         else:
             for i in range(1,level+1):
-                lo=random.randrange(1,self.hortiles),random.randrange(1,self.verttiles) #last obstacle
+                lo=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles) #last obstacle
                 self.obstacles.append(lo)
-                for j in range(1,random.randint(1,int(level/2))):
+                for j in range(1,random.randint(1,level)):
                     if random.randint(1,2) == 1:
                         lo=(lo[0]+1,lo[1])
                     else:
                         lo=(lo[0],lo[1]+1)
-                    if 0<lo[0]<=self.hortiles and 0<lo[1]<=self.verttiles :
+                    if 0<=lo[0]<self.hortiles and 0<=lo[1]<self.verttiles :
                         self.obstacles.append(lo)
 
     def setPlayers(self,players):
@@ -131,7 +133,6 @@ class SnakeGame:
         if snake.IsDead:
             self.players.remove(snake)
             self.dead.append(snake)
-            logging.info("Player <{}> is dead".format(snake.name))
             return
         #updates the snake...
         head=snake.body[0]#head of snake
