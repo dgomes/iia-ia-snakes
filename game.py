@@ -138,8 +138,8 @@ class SnakeGame:
         head=snake.body[0]#head of snake
         head=(head[0]+snake.agent.direction[0],head[1]+snake.agent.direction[1])
         #wrap the snake around the window
-        headx=self.hortiles if head[0]<0 else 0 if head[0]>self.hortiles else head[0]
-        heady=self.verttiles if head[1]<0 else 0 if head[1]>self.verttiles else head[1]
+        headx=self.hortiles-1 if head[0]<0 else 0 if head[0]>=self.hortiles else head[0]
+        heady=self.verttiles-1 if head[1]<0 else 0 if head[1]>=self.verttiles else head[1]
         head=(headx,heady)
         #update the body and see if the snake is dead
         alivelist=[alive for alive in reversed(self.players) if not alive.IsDead]
