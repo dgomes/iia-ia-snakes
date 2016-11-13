@@ -203,7 +203,7 @@ class SnakeGame:
             #print food
             run = [-1,1,0]
             neighbours = [((self.foodpos[0] + x)%self.hortiles, (self.foodpos[1] + y)%self.verttiles) for x in run for y in run]
-            valid_neighbours = [n for n in neighbours if not n in self.obstacles or n in self.playerpos] 
+            valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
             self.foodpos = random.choice(valid_neighbours)
 
             pygame.draw.rect(self.screen,self.foodcolor,(self.foodpos[0]*self.tilesize,self.foodpos[1]*self.tilesize,self.tilesize,self.tilesize),0)
