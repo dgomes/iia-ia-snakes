@@ -35,20 +35,25 @@ class Player:
         logging.info("Player <{}> points: {}".format(self.name, self.points))
 
 class SnakeGame:
-    def __init__(self, hor=60, ver=40, tilesize=20, fps=50):
-        #create the window and do other stuff
-        pygame.init()
+    def __init__(self, hor=60, ver=40, tilesize=20, fps=50, visual=False):
         self.tilesize=tilesize  #tile size, adjust according to screen size
         self.hortiles=hor   #number of horizontal tiles
         self.verttiles=ver  #number of vertical tiles
-        self.screen = pygame.display.set_mode(((self.hortiles)*self.tilesize,(self.verttiles)*self.tilesize+25), pygame.RESIZABLE)
-        pygame.display.set_caption('Python Snake')
         
-        #load the font
-        self.font = pygame.font.Font(None, 30)
+        if visual: 
+            #create the window and do other stuff
+            pygame.init()
+            self.screen = pygame.display.set_mode(((self.hortiles)*self.tilesize,(self.verttiles)*self.tilesize+25), pygame.RESIZABLE)
+            pygame.display.set_caption('Python Snake')
+        
+            #load the font
+            self.font = pygame.font.Font(None, 30)
+            self.obscolor=(139,69,19)
+            self.foodcolor=(0,255,0)
+        else:
+            self.screen = None
+
         self.obstacles=[]
-        self.obscolor=(139,69,19)
-        self.foodcolor=(0,255,0)
         self.foodpos=(0,0)
         self.fps=fps #frames per second. The higher, the harder
 
@@ -86,7 +91,11 @@ class SnakeGame:
 
     def setPlayers(self,players):
         self.players=[]
-        colors = [c for c in constants.colours if c not in [self.obscolor, self.foodcolor]]
+        if self.screen != None:
+            colors = [c for c in constants.colours if c not in [self.obscolor, self.foodcolor]]
+        else:
+            colors = constants.colours
+
         for p in players:
             c = random.choice(colors)
             colors.remove(c)
@@ -96,29 +105,39 @@ class SnakeGame:
     def printstatus(self):
         PlayerStat = namedtuple('PlayerStat', 'name color points')
         players = [PlayerStat(p.name, p.color, p.points) for p in self.players + self.dead]
-       
+      
         score = "{} vs {}".format(players[0].points, players[1].points)
-        text = self.font.render(score, 1,(255,255,255))
-        textpos = text.get_rect(centerx=self.screen.get_width()/2,y=(self.verttiles)*self.tilesize)
+        if self.screen == None and self.count % self.fps == 0:
+            logging.info("{} {} {}".format(players[0].name, score, players[1].name))
+        elif self.screen != None:
+            text = self.font.render(score, 1,(255,255,255))
+            textpos = text.get_rect(centerx=self.screen.get_width()/2,y=(self.verttiles)*self.tilesize)
 
+            player1_name=self.font.render(players[0].name,1,players[0].color)
+            player1_pos = player1_name.get_rect(x=self.screen.get_width()/2 - self.font.size(score + players[0].name)[0],y=(self.verttiles)*self.tilesize)
 
-        player1_name=self.font.render(players[0].name,1,players[0].color)
-        player1_pos = player1_name.get_rect(x=self.screen.get_width()/2 - self.font.size(score + players[0].name)[0],y=(self.verttiles)*self.tilesize)
-
-        player2_name=self.font.render(players[1].name,1,players[1].color)
-        player2_pos = player2_name.get_rect(x=self.screen.get_width()/2 + self.font.size(score)[0],y=(self.verttiles)*self.tilesize)
+            player2_name=self.font.render(players[1].name,1,players[1].color)
+            player2_pos = player2_name.get_rect(x=self.screen.get_width()/2 + self.font.size(score)[0],y=(self.verttiles)*self.tilesize)
             
         
-        self.screen.blit(player1_name, player1_pos)
-        self.screen.blit(player2_name, player2_pos)
-        self.screen.blit(text, textpos)
+            self.screen.blit(player1_name, player1_pos)
+            self.screen.blit(player2_name, player2_pos)
+            self.screen.blit(text, textpos)
       
         text=None
         if len(self.players) == 1:
-            text=self.font.render("{} is the Winner!".format(self.players[0].name),1,self.players[0].color)
+            winner = "{} is the Winner!".format(self.players[0].name)
+            if self.screen == None:
+                logging.info(winner)
+            else:
+                text=self.font.render(winner,1,self.players[0].color)
         elif len(self.players) == 0:
-            text=self.font.render("All dead...",1,(255,0,0))
-        if text != None:
+            dead = "All dead..."
+            if self.screen == None:
+                logging.info(dead)
+            else:
+                text=self.font.render(dead,1,(255,0,0))
+        if text != None and self.screen != None:
             textpos = text.get_rect(centerx=self.screen.get_width()/2,centery=self.screen.get_height()/2)
             self.screen.blit(text, textpos)
     
@@ -166,18 +185,19 @@ class SnakeGame:
         self.count=0
         while True:
             clock.tick(self.fps)
-            for event in pygame.event.get():
-                if event.type == QUIT or event.type == pygame.KEYDOWN and event.key == K_q: #close window or press Q
-                    pygame.quit();
-                    exit()
-                elif event.type == pygame.KEYDOWN:
-                    for player in self.players:
-                        player.agent.processkey(event.key)
-                elif event.type == pygame.VIDEORESIZE:
-                        self.tilesize = int(max(event.w/(self.hortiles), event.h/(self.verttiles)))
-                        self.screen = pygame.display.set_mode(((self.hortiles)*self.tilesize,(self.verttiles)*self.tilesize+25), pygame.RESIZABLE)
+            if self.screen != None:
+                for event in pygame.event.get():
+                    if event.type == QUIT or event.type == pygame.KEYDOWN and event.key == K_q: #close window or press Q
+                        pygame.quit();
+                        exit()
+                    elif event.type == pygame.KEYDOWN:
+                        for player in self.players:
+                            player.agent.processkey(event.key)
+                    elif event.type == pygame.VIDEORESIZE:
+                            self.tilesize = int(max(event.w/(self.hortiles), event.h/(self.verttiles)))
+                            self.screen = pygame.display.set_mode(((self.hortiles)*self.tilesize,(self.verttiles)*self.tilesize+25), pygame.RESIZABLE)
+                self.screen.fill((0,0,0))
             self.count+=1
-            self.screen.fill((0,0,0))
             #game logic is updated in the code below
             self.updatePlayerInfo()
             self.generateFood() #generate food if necessary
@@ -192,21 +212,25 @@ class SnakeGame:
                     player.point(-10)   #we penalize players that take longer then a half a tick§
             for player in self.players:
                 self.update(player)
-            #print all the content in the screen
-            for player in self.players: #print players
-                for part in player.body:
-                    pygame.draw.rect(self.screen, player.color, (part[0]*self.tilesize,part[1]*self.tilesize,self.tilesize,self.tilesize),0)
-
-            for obstacle in self.obstacles: #print obstacles
-                pygame.draw.rect(self.screen,self.obscolor,(obstacle[0]*self.tilesize,obstacle[1]*self.tilesize,self.tilesize,self.tilesize),0)
-
-            #print food
+        
+            #move food
             run = [-1,1,0]
             neighbours = [((self.foodpos[0] + x)%self.hortiles, (self.foodpos[1] + y)%self.verttiles) for x in run for y in run]
             valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
             self.foodpos = random.choice(valid_neighbours)
 
-            pygame.draw.rect(self.screen,self.foodcolor,(self.foodpos[0]*self.tilesize,self.foodpos[1]*self.tilesize,self.tilesize,self.tilesize),0)
- 
             self.printstatus()
-            pygame.display.update()
+            
+            #print all the content in the screen
+            if self.screen != None:
+                for player in self.players: #print players
+                    for part in player.body:
+                        pygame.draw.rect(self.screen, player.color, (part[0]*self.tilesize,part[1]*self.tilesize,self.tilesize,self.tilesize),0)
+
+                for obstacle in self.obstacles: #print obstacles
+                    pygame.draw.rect(self.screen,self.obscolor,(obstacle[0]*self.tilesize,obstacle[1]*self.tilesize,self.tilesize,self.tilesize),0)
+
+                #print food
+                pygame.draw.rect(self.screen,self.foodcolor,(self.foodpos[0]*self.tilesize,self.foodpos[1]*self.tilesize,self.tilesize,self.tilesize),0)
+ 
+                pygame.display.update()
