@@ -1,7 +1,6 @@
 # Snake Game Version 1.0 
 # Initially based on the code provided by http://www.virtualanup.com at https://gist.githubusercontent.com/virtualanup/7254581/raw/d69804ce5b41f73aa847f4426098dca70b5a1294/snake2.py
 # Diogo Gomes <dgomes@av.it.pt>
-
 import copy
 from collections import namedtuple
 from sys import exit
@@ -9,13 +8,9 @@ import pygame,random
 from pygame.locals import *
 import constants
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-      
-class Maze:
-    def __init__(self, o, p, f):
-        self.obstacles = copy.deepcopy(o)
-        self.playerpos = copy.deepcopy(p)
-        self.foodpos = copy.deepcopy(f)
+from maze import Maze
+
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG) 
 
 class Player:
     def __init__(self, agent, color=(255,0,0)):
@@ -209,7 +204,7 @@ class SnakeGame:
                 
                 if f-s > 1000*(1/self.fps)/2:
                     logging.debug("Player <{}> took {}".format(player.name, f-s))
-                    player.point(-10)   #we penalize players that take longer then a half a tick§
+                    player.point(-10)   #we penalize players that take longer then a half a tick
             for player in self.players:
                 self.update(player)
         
