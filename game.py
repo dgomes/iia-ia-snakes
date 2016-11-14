@@ -184,7 +184,7 @@ class SnakeGame:
     def start(self):
         clock = pygame.time.Clock()
         self.count=0
-        while True:
+        while len([a for a in self.players if not a.IsDead]) > 1:
             clock.tick(self.fps)
             if self.screen != None:
                 for event in pygame.event.get():
@@ -236,3 +236,8 @@ class SnakeGame:
             self.printstatus()
             if self.screen != None:
                 pygame.display.update()
+        while True:
+            event = pygame.event.wait()
+            if event.type == QUIT or event.type == pygame.KEYDOWN and event.key == K_q: #close window or press Q
+                pygame.quit(); 
+                exit()
