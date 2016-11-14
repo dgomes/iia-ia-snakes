@@ -2,6 +2,7 @@
 # Initially based on the code provided by http://www.virtualanup.com at https://gist.githubusercontent.com/virtualanup/7254581/raw/d69804ce5b41f73aa847f4426098dca70b5a1294/snake2.py
 # Diogo Gomes <dgomes@av.it.pt>
 import copy
+import sys
 from collections import namedtuple
 from sys import exit
 import pygame,random
@@ -149,7 +150,6 @@ class SnakeGame:
     def gameKill(self, snake):
        snake.kill()
        self.updatePlayerInfo()
-       self.players.remove(snake)
        self.dead.append(snake)
 
     def update(self,snake):
@@ -184,11 +184,11 @@ class SnakeGame:
     def start(self):
         clock = pygame.time.Clock()
         self.count=0
-        while True:
+        while len([p for p in self.players if not p.IsDead]) > 1:
             clock.tick(self.fps)
             if self.screen != None:
                 for event in pygame.event.get():
-                    if event.type == QUIT or event.type == pygame.KEYDOWN and event.key == K_q: #close window or press Q
+                    if event.type == QUIT or (event.type == pygame.KEYDOWN and event.key == K_q): #close window or press Q
                         pygame.quit();
                         exit()
                     elif event.type == pygame.KEYDOWN:
@@ -236,3 +236,10 @@ class SnakeGame:
             self.printstatus()
             if self.screen != None:
                 pygame.display.update()
+
+
+        while True:
+            event = pygame.event.wait()
+            if event.type == QUIT or (event.type == pygame.KEYDOWN and event.key == K_q):
+                pygame.quit() 
+                sys.exit()
