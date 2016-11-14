@@ -236,7 +236,7 @@ class SnakeGame:
             self.printstatus()
             if self.screen != None:
                 pygame.display.update()
-        while True:
+        while self.screen != None:
             event = pygame.event.wait()
             if event.type == QUIT or event.type == pygame.KEYDOWN and event.key == K_q: #close window or press Q
                 pygame.quit(); 
