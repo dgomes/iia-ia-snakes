@@ -174,7 +174,8 @@ class SnakeGame:
         #the snake hasnot collided....move along
         snake.body=[head]+snake.body[:-1]
 
-        snake.agent.body = copy.deepcopy(snake.body)
+        snake.agent.updateBody(copy.deepcopy(snake.body))
+
     def start(self):
         clock = pygame.time.Clock()
         self.count=0
@@ -214,7 +215,6 @@ class SnakeGame:
             valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
             self.foodpos = random.choice(valid_neighbours)
 
-            self.printstatus()
             
             #print all the content in the screen
             if self.screen != None:
@@ -228,4 +228,6 @@ class SnakeGame:
                 #print food
                 pygame.draw.rect(self.screen,self.foodcolor,(self.foodpos[0]*self.tilesize,self.foodpos[1]*self.tilesize,self.tilesize,self.tilesize),0)
  
+            self.printstatus()
+            if self.screen != None:
                 pygame.display.update()
