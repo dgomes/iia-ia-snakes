@@ -3,12 +3,15 @@ from human import HumanSnake
 from agent1 import Agent1
 from netagent import NetworkAgent
 from maze import Maze
-
+import importlib
 import asyncio
 import websockets
 import json
 import logging
 import sys, getopt
+
+StudentAgent = Agent1
+StudentAgent_name = "Alice"
 
 #start the game
 def main(argv):
@@ -16,10 +19,12 @@ def main(argv):
     visual = True
     network = False
     url = 'ws://localhost:8765' 
+    OponentAgent = Agent1
+    OponentAgent_name = "Bob"
     try:
-        opts, args = getopt.getopt(argv,"hm:u:",["map=","disable-video","url="])
+        opts, args = getopt.getopt(argv,"hm:u:a:",["map=","disable-video","url=","agent="])
     except getopt.GetoptError:
-        print('start.py [-m/--map <mapfile> --disable-video -u/--url websocket_url]')
+        print('start.py [-m/--map <mapfile> --disable-video -u/--url websocket_url -a/--agent AgentName]')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
@@ -31,17 +36,20 @@ def main(argv):
             visual = False 
         elif opt in ("-u", "--url"):
             network = True
+            OponentAgent = NetworkAgent
             url = arg            
+        elif opt in ("-a", "--agent"):
+            classmodule = importlib.import_module(arg.lower())
+            classInst = getattr(classmodule, arg)
+            StudentAgent = classInst 
 
     if network:
         asyncio.get_event_loop().run_until_complete(proxy(url))
     else:
-        snake=SnakeGame(hor=60, ver=40, fps=20, visual=visual)
-        snake.setObstacles(15,inputfile) #level of obstacles
+        snake=SnakeGame(hor=60, ver=40, fps=20, visual=visual, obstacles=15, mapa=inputfile)
         snake.setPlayers([  
-            Agent1([snake.playerPos()]),
-    #        Agent1([snake.playerPos()]),
-            NetworkAgent([snake.playerPos()]),
+            StudentAgent([snake.playerPos()], name=StudentAgent_name),
+            OponentAgent([snake.playerPos()], name=OponentAgent_name),
         ])
         snake.start()
 
@@ -54,7 +62,7 @@ async def proxy(url):
         #connect to proxy, get init values and announce ourselves through the agent name
         await websocket.send(json.dumps({'cmd': 'PROXY'}))
         init = json.loads(await websocket.recv())
-        agent = Agent1([(b[0], b[1]) for b in init['body']],(init['direction'][0], init['direction'][1]), name = "Network")
+        agent = StudentAgent([(b[0], b[1]) for b in init['body']],(init['direction'][0], init['direction'][1]), name = OponentAgent_name)
         await websocket.send(agent.name)
 
         while True:
