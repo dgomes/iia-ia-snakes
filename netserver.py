@@ -27,7 +27,7 @@ async def proxyserver(websocket, path):
             print("AGENT: {}".format(m))
             await proxy.send(m)
 
-start_server = websockets.serve(proxyserver, 'localhost', 8765)
+start_server = websockets.serve(proxyserver, port=8765)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
