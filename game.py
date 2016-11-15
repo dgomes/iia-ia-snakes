@@ -32,11 +32,17 @@ class Player:
         logging.info("Player <{}> points: {}".format(self.name, self.points))
 
 class SnakeGame:
-    def __init__(self, hor=60, ver=40, tilesize=20, fps=50, visual=False):
+    def __init__(self, hor=60, ver=40, tilesize=20, fps=50, visual=False, obstacles=15, mapa=None):
         self.tilesize=tilesize  #tile size, adjust according to screen size
         self.hortiles=hor   #number of horizontal tiles
         self.verttiles=ver  #number of vertical tiles
-        
+       
+        if mapa != None:
+            image = pygame.image.load(mapa)
+            pxarray = pygame.PixelArray(image)
+            self.hortiles=len(pxarray)
+            self.verttiles=len(pxarray[0])
+
         if visual: 
             #create the window and do other stuff
             pygame.init()
@@ -53,6 +59,7 @@ class SnakeGame:
         self.obstacles=[]
         self.foodpos=(0,0)
         self.fps=fps #frames per second. The higher, the harder
+        self.setObstacles(obstacles, mapa)
 
     def generateFood(self):
         if self.foodpos == (0,0):
@@ -238,8 +245,8 @@ class SnakeGame:
                 pygame.display.update()
 
 
-        while True:
+        while self.screen != None:
             event = pygame.event.wait()
-            if event.type == QUIT or (event.type == pygame.KEYDOWN and event.key == K_q):
-                pygame.quit() 
-                sys.exit()
+            if event.type == QUIT or (event.type == pygame.KEYDOWN and event.key == K_q): #close window or press Q
+                pygame.quit(); 
+                exit()
