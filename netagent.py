@@ -3,10 +3,10 @@ from constants import *
 from websocket import create_connection
 import json
 
-class NetworkAgent(Snake):
-    def __init__(self,body=[(0,0)] , direction=(1,0)):
-        self.ws = create_connection("ws://localhost:8765")
-        super().__init__(body,direction,name="Agent1")
+class NetAgent(Snake):
+    def __init__(self,body=[(0,0)] , direction=(1,0), name="network", url="ws://localhost:8765"):
+        self.ws = create_connection(url)
+        super().__init__(body,direction,name=name)
         self.ws.send(json.dumps({'cmd':'init', 'body':body, 'direction':direction}))
         self.name = self.ws.recv()
     def updateBody(self,body):
