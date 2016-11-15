@@ -22,7 +22,6 @@ async def proxyserver(websocket, path):
     else:
         agent = websocket
         await proxy.send(_msg)
-        print("Sent")
         while True:
             m = await agent.recv()
             print("AGENT: {}".format(m))
