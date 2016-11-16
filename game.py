@@ -215,11 +215,12 @@ class SnakeGame:
                 self.update(player)
         
             #move food
-            run = [-1,1,0]
-            neighbours = [((self.foodpos[0] + x + self.hortiles)%self.hortiles, (self.foodpos[1] + y + self.verttiles)%self.verttiles) for x in run for y in run]
-            print(neighbours)
-            valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
-            self.foodpos = random.choice(valid_neighbours)
+            if self.foodpos != 0,0:
+                run = [-1,1,0]
+                neighbours = [((self.foodpos[0] + x + self.hortiles)%self.hortiles, (self.foodpos[1] + y + self.verttiles)%self.verttiles) for x in run for y in run]
+                print(neighbours)
+                valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
+                self.foodpos = random.choice(valid_neighbours)
 
             
             #print all the content in the screen
