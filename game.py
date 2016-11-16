@@ -216,7 +216,8 @@ class SnakeGame:
         
             #move food
             run = [-1,1,0]
-            neighbours = [((self.foodpos[0] + x)%self.hortiles, (self.foodpos[1] + y)%self.verttiles) for x in run for y in run]
+            neighbours = [((self.foodpos[0] + x + self.hortiles)%self.hortiles, (self.foodpos[1] + y + self.verttiles)%self.verttiles) for x in run for y in run]
+            print(neighbours)
             valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
             self.foodpos = random.choice(valid_neighbours)
 
@@ -240,6 +241,6 @@ class SnakeGame:
 
         while self.screen != None:
             event = pygame.event.wait()
-            if event.type == QUIT or event.type == pygame.KEYDOWN and event.key == K_q: #close window or press Q
+            if event.type == QUIT or (event.type == pygame.KEYDOWN and event.key == K_q): #close window or press Q
                 pygame.quit(); 
                 exit()

@@ -3,8 +3,8 @@ from pygame.locals import *
 from constants import *
 
 class HumanSnake(Snake):
-    def __init__(self,body=[(0,0)] , direction=(1,0)):
-        super().__init__(body,direction,name="Human")
+    def __init__(self,body=[(0,0)] , direction=(1,0), name="Human"):
+        super().__init__(body,direction,name=name)
         #assign the keys to control the human snake
         self.upkey=K_UP
         self.downkey=K_DOWN
