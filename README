@@ -1,0 +1,9 @@
+Network Game:
+
+A remote player (will not get video output) will play against a local player
+
+step 1: (server) - python3 netserver.py 8765
+step 2: (REMOTE player being proxied) - python3 start.py -p -s Agent1,remoto,ws://server:8765
+step 3: (LOCAL player hosting the game) - python3 start.py -s Agent1,local -o NetAgent,remoto,ws://server:8765 
+
+Don't forget about firewalls and ports!
