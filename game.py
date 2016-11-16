@@ -215,7 +215,7 @@ class SnakeGame:
                 self.update(player)
         
             #move food
-            if self.foodpos != 0,0:
+            if self.foodpos != (0,0):
                 run = [-1,1,0]
                 neighbours = [((self.foodpos[0] + x + self.hortiles)%self.hortiles, (self.foodpos[1] + y + self.verttiles)%self.verttiles) for x in run for y in run]
                 print(neighbours)
