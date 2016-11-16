@@ -2,6 +2,7 @@
 import asyncio
 import websockets
 import json
+import sys
 
 agent = None
 proxy = None
@@ -27,7 +28,10 @@ async def proxyserver(websocket, path):
             print("AGENT: {}".format(m))
             await proxy.send(m)
 
-start_server = websockets.serve(proxyserver, port=8765)
+if len(sys.argv) < 2:
+    print("Usage: python3 {} port_number".format(sys.argv[0]))
+    sys.exit(1)
+start_server = websockets.serve(proxyserver, port=int(sys.argv[1]))
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
