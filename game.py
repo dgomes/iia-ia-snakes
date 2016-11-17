@@ -155,6 +155,10 @@ class SnakeGame:
     def update(self,snake):
         #updates the snake...
         head=snake.body[0]#head of snake
+        if abs(snake.agent.direction[0]) > 1 or abs(snake.agent.direction[1] > 1):
+            logging.error("{} tried to teleport -> DEAD".format(snake.agent.name))
+            self.gameKill(snake)
+            return
         head=(head[0]+snake.agent.direction[0],head[1]+snake.agent.direction[1])
         #wrap the snake around the window
         headx=self.hortiles-1 if head[0]<0 else 0 if head[0]>=self.hortiles else head[0]
@@ -218,8 +222,7 @@ class SnakeGame:
             if self.foodpos != (0,0):
                 run = [-1,1,0]
                 neighbours = [((self.foodpos[0] + x + self.hortiles)%self.hortiles, (self.foodpos[1] + y + self.verttiles)%self.verttiles) for x in run for y in run]
-                print(neighbours)
-                valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
+                valid_neighbours = [n for n in neighbours if (not n in self.obstacles) and (not n in self.playerpos)] 
                 self.foodpos = random.choice(valid_neighbours)
 
             
