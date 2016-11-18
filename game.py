@@ -208,7 +208,14 @@ class SnakeGame:
             self.count+=1
             #game logic is updated in the code below
             self.updatePlayerInfo()
+            
+            #food
             self.generateFood() #generate food if necessary
+            run = [-1,1,0]
+            neighbours = [((self.foodpos[0] + x)%self.hortiles, (self.foodpos[1] + y)%self.verttiles) for x in run for y in run]
+            valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
+            self.foodpos = random.choice(valid_neighbours)
+
             for player in [a for a in self.players if not a.IsDead]:
                 s = pygame.time.get_ticks()
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
@@ -221,12 +228,6 @@ class SnakeGame:
             for player in self.players:
                 self.update(player)
         
-            #move food
-            run = [-1,1,0]
-            neighbours = [((self.foodpos[0] + x)%self.hortiles, (self.foodpos[1] + y)%self.verttiles) for x in run for y in run]
-            valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
-            self.foodpos = random.choice(valid_neighbours)
-
             
             #print all the content in the screen
             if self.screen != None:
