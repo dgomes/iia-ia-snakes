@@ -77,7 +77,7 @@ async def proxy(url, StudentAgent, agent_name):
         logger.addHandler(logging.StreamHandler())
 
         #connect to proxy, get init values and announce ourselves through the agent name
-        await websocket.send(json.dumps({'cmd': 'HELLO', 'agent_name': agent_name}))
+        await websocket.send(json.dumps({'cmd': 'AGENT', 'agent_name': agent_name}))
         init = json.loads(await websocket.recv())
         agent = StudentAgent([(b[0], b[1]) for b in init['body']],(init['direction'][0], init['direction'][1]), name = agent_name)
         await websocket.send(agent.name)

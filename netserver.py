@@ -4,44 +4,58 @@ import websockets
 import json
 import sys
 import logging
+import sqlite3
 
 logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.INFO)
-proxy = None
-agent = None
+proxy = dict() 
+agent = dict()
+conn = sqlite3.connect('scores.db')
+sql = "CREATE TABLE IF NOT EXISTS scores (id INTEGER PRIMARY KEY AUTOINCREMENT, t TIMESTAMP DEFAULT CURRENT_TIMESTAMP, player1 STRING, player1_score INTEGER, player2 STRING, player2_score INTEGER) ;"
+c = conn.cursor()
+c.execute(sql)
+conn.commit()
 
 async def agentserver(websocket, path):
-    global proxy, agent
-
+    global proxy, agent,conn
+    score = None
     try:
         _msg = await websocket.recv()
-        msg = json.loads(_msg) 
+        msg = json.loads(_msg)
+        name = msg['agent_name'] 
         logging.info("INIT: {}".format(msg))
-        if msg['cmd'] == "HELLO":
-            agent = websocket
+        if msg['cmd'] == "AGENT":
+            agent[name] = websocket
             while True:
-                m = await agent.recv()
+                m = await agent[name].recv()
                 logging.debug("AGENT: {}".format(m))
-                await proxy.send(m)
-            
-        else:
-            proxy = websocket
-            if agent == None:
+                await proxy[name].send(m)
+        elif msg['cmd'] == 'PROXY':
+            proxy[name] = websocket
+            if agent[name] == None:
                 logging.error("Agent must connect before Proxy") 
-                proxy.close()
+                proxy[name].close()
                 return
-            await agent.send(_msg) #proxy 1st message is the __init__ that must be sent to the agent
             while True:
-                m = await proxy.recv()
+                m = await proxy[name].recv()
                 logging.debug("PROXY: {}".format(m))
-                await agent.send(m)
 
+                msg = json.loads(m)
+                if msg['cmd'] == 'update':
+                    score = msg['points']
+
+                await agent[name].send(m)
     except websockets.exceptions.ConnectionClosed as e:
-        if proxy != None:
-            proxy.close(1001,"Other end closed")
-            proxy = None
-        if agent != None:
-            agent.close(1001,"Other end closed")
-            agent = None
+        if proxy[name] != None:
+            proxy[name].close(1001,"Other end closed")
+            proxy[name] = None
+        if agent[name] != None:
+            agent[name].close(1001,"Other end closed")
+            agent[name] = None
+        if score != None:
+            logging.info(score)
+            c = conn.cursor()
+            c.execute('INSERT INTO scores (player1, player1_score, player2, player2_score) VALUES (?,?,?,?)', (score[0][0], score[0][1], score[1][0], score[1][1] ))
+            conn.commit()
 
 if len(sys.argv) < 2:
     print("Usage: python3 {} port_number".format(sys.argv[0]))
