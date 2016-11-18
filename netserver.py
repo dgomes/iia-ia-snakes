@@ -45,10 +45,10 @@ async def agentserver(websocket, path):
 
                 await agent[name].send(m)
     except websockets.exceptions.ConnectionClosed as e:
-        if proxy[name] != None:
+        if name in proxy.keys() and proxy[name] != None:
             proxy[name].close(1001,"Other end closed")
             proxy[name] = None
-        if agent[name] != None:
+        if name in agent.keys() and agent[name] != None:
             agent[name].close(1001,"Other end closed")
             agent[name] = None
         if score != None:

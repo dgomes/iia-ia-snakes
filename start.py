@@ -89,7 +89,7 @@ async def proxy(url, StudentAgent, agent_name):
                 agent.updateBody([(b[0], b[1]) for b in msg['body']])
             if msg['cmd'] == 'update':
                 logging.info(msg['points'])
-                agent.update(points=[(p[0], p[1]) for p in msg['points']], mapsize=(msg['mapsize'],msg['mapsize']), count=msg['count'], agent_time=msg['agent_time'])
+                agent.update(points=[(p[0], p[1]) for p in msg['points']], mapsize=(msg['mapsize'][0],msg['mapsize'][1]), count=msg['count'], agent_time=msg['agent_time'])
             elif msg['cmd'] == 'updateDirection':
                 maze = Maze(None, None, None) #create void maze before loading the real one
                 maze.fromNetwork(msg['maze'])
