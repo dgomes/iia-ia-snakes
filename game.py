@@ -213,7 +213,7 @@ class SnakeGame:
                 s = pygame.time.get_ticks()
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
-                f = pygame.time.get_ticks()
+                f = pygame.time.get_ticks() - 200 #200ms bonus for network communications
                 
                 if f-s > 1000*(1/self.fps)/2:
                     logging.debug("Player <{}> took {}".format(player.name, f-s))
