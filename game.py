@@ -18,7 +18,10 @@ class Player:
         self.agent = agent 
         self.body = agent.body 
         self.name = agent.name
-        self.color = color 
+        self.color = color
+        r,g,b = color
+        f = 0.50
+        self.head_color = (int(r+(255-r)*f), int(g+(255-g)*f), int(b+(255-b)*f))
         self.IsDead = False
         self.points = 0
     def kill(self):
@@ -235,7 +238,9 @@ class SnakeGame:
             #print all the content in the screen
             if self.screen != None:
                 for player in self.players: #print players
-                    for part in player.body:
+                    #head + rest of body
+                    pygame.draw.rect(self.screen, player.head_color, (player.body[0][0]*self.tilesize,player.body[0][1]*self.tilesize,self.tilesize,self.tilesize),0)
+                    for part in player.body[1:]:
                         pygame.draw.rect(self.screen, player.color, (part[0]*self.tilesize,part[1]*self.tilesize,self.tilesize,self.tilesize),0)
 
                 for obstacle in self.obstacles: #print obstacles
