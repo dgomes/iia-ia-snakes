@@ -21,7 +21,7 @@ def main(argv):
     studentAgent_name = "Agent1"
     student_url = None
     OponentAgent = Agent1
-    sponentAgent_name = "Agent1"
+    oponentAgent_name = "Agent1"
     oponent_url = None
     try:
         opts, args = getopt.getopt(argv,"hm:s:o:p",["help","map=","disable-video","student-agent=","oponent-agent=","proxy"])
