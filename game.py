@@ -165,7 +165,7 @@ class SnakeGame:
     def update(self,snake):
         #updates the snake...
         head=snake.body[0]#head of snake
-        if abs(snake.agent.direction[0]) > 1 or abs(snake.agent.direction[1] > 1):
+        if abs(snake.agent.direction[0]) > 1 or abs(snake.agent.direction[1]) > 1:
             logging.error("{} tried to teleport -> DEAD".format(snake.agent.name))
             self.gameKill(snake)
             return
