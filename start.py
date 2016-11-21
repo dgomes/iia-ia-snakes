@@ -1,5 +1,4 @@
 from game import *
-from human import HumanSnake
 from agent1 import Agent1
 from maze import Maze
 import importlib

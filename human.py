@@ -2,7 +2,7 @@ from snake import Snake
 from pygame.locals import *
 from constants import *
 
-class HumanSnake(Snake):
+class Human(Snake):  ### class name now matches module name!
     def __init__(self,body=[(0,0)] , direction=(1,0), name="Human"):
         super().__init__(body,direction,name=name)
         #assign the keys to control the human snake
@@ -26,4 +26,6 @@ class HumanSnake(Snake):
             if self.direction != right:
                 self.newdirection=left
 
+### An alias for the class name, to keep backward compatibility.
+HumanSnake = Human
 
