@@ -1,3 +1,5 @@
+from enum import Enum
+
 #Colours
 Black = (0,0,0)
 White = (255,255,255)
@@ -24,4 +26,10 @@ right=1,0
 up=0,-1
 down=0,1
 directions=[up,down,right,left]
+
+#update returns
+class AgentUpdate(Enum):
+    nothing=0
+    died=1
+    ate_food=2
 
