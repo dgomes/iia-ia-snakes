@@ -59,7 +59,7 @@ def main(argv):
         if student_url == None:
             print("Must specify --student-agent Agent,name,websocket")
             sys.exit(1)
-        print("Connecting to {}".format(url))
+        print("Connecting to {}".format(student_url))
         asyncio.get_event_loop().run_until_complete(proxy(student_url,StudentAgent, studentAgent_name))
     else:
         snake=SnakeGame(hor=60, ver=40, fps=20, visual=visual, obstacles=15, mapa=inputfile)
