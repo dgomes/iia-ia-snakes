@@ -224,8 +224,8 @@ class SnakeGame:
             self.foodpos = random.choice(valid_neighbours)
 
             for player in [a for a in self.players if not a.IsDead]:
-                s = pygame.time.get_ticks()
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
+                s = pygame.time.get_ticks()
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
                 f = pygame.time.get_ticks() - 200 #200ms bonus for network communications
                 
