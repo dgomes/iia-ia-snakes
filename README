@@ -24,3 +24,16 @@ Don't forget about firewalls and ports!
 
 There is a public server:  ws://barbrady.av.it.pt/snakes
 
+# How to configure a remote repository (get updates from the teachers repository)
+
+Since you probably cloned the professors repository and created your own repository, you need to configure a a remote repository:
+
+    git remote add upstream https://code.ua.pt/git/iia-ia-snakes
+
+Now you can fetch from the upstream and merge with your repository:
+
+    git fetch upstream
+    git checkout master (or other branch)
+    git merge upstream/master (or other branch)
+
+
