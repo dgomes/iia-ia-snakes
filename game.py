@@ -7,7 +7,7 @@ from collections import namedtuple
 from sys import exit
 import pygame,random
 from pygame.locals import *
-import constants
+from constants import *
 import logging
 from maze import Maze
 
@@ -58,17 +58,17 @@ class SnakeGame:
             self.foodcolor=(0,255,0)
         else:
             self.screen = None
-
+        
+        self.playerpos=[]
         self.obstacles=[]
-        self.foodpos=(0,0)
+        self.generateFood()
         self.fps=fps #frames per second. The higher, the harder
         self.setObstacles(obstacles, mapa)
 
     def generateFood(self):
-        if self.foodpos == (0,0):
+        self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
+        while (self.foodpos in self.playerpos or self.foodpos in self.obstacles):
             self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
-            while (self.foodpos in self.playerpos or self.foodpos in self.obstacles):
-                self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
 
     def playerPos(self):
         pos = random.randrange(1, self.hortiles), random.randrange(1, self.verttiles)
@@ -99,9 +99,9 @@ class SnakeGame:
     def setPlayers(self,players):
         self.players=[]
         if self.screen != None:
-            colors = [c for c in constants.colours if c not in [self.obscolor, self.foodcolor]]
+            colors = [c for c in colours if c not in [self.obscolor, self.foodcolor]]
         else:
-            colors = constants.colours
+            colors = colours
 
         for p in players:
             c = random.choice(colors)
@@ -164,6 +164,8 @@ class SnakeGame:
 
     def update(self,snake):
         #updates the snake...
+        r = AgentUpdate.nothing
+
         head=snake.body[0]#head of snake
         if abs(snake.agent.direction[0]) > 1 or abs(snake.agent.direction[1]) > 1:
             logging.error("{} tried to teleport -> DEAD".format(snake.agent.name))
@@ -181,20 +183,21 @@ class SnakeGame:
                 if head == alive.body[0]:#in case of head to head collision, kill both of the snakes
                     self.gameKill(alive)
                 self.gameKill(snake)
-                return
+                return AgentUpdate.died
         if head in self.obstacles:#hit an obstacle
             self.gameKill(snake)
-            return
+            return AgentUpdate.died
         elif head == self.foodpos:
             #the snake ate the food
-            self.foodpos=0,0
             snake.body.append((snake.body[0]))
             snake.point(10)
+            r = AgentUpdate.ate_food
         #the snake hasnot collided....move along
         snake.body=[head]+snake.body[:-1]
 
         snake.agent.updateBody(copy.deepcopy(snake.body))
-
+        return r
+    
     def start(self):
         clock = pygame.time.Clock()
         self.count=0
@@ -216,8 +219,7 @@ class SnakeGame:
             #game logic is updated in the code below
             self.updatePlayerInfo()
             
-            #food
-            self.generateFood() #generate food if necessary
+            #moving food
             run = [-1,1,0]
             neighbours = [((self.foodpos[0] + x)%self.hortiles, (self.foodpos[1] + y)%self.verttiles) for x in run for y in run]
             valid_neighbours = [n for n in neighbours if not n in self.obstacles and not n in self.playerpos] 
@@ -232,9 +234,15 @@ class SnakeGame:
                 if f-s > 1000*(1/self.fps)/2:
                     logging.debug("Player <{}> took {}".format(player.name, f-s))
                     player.point(-10)   #we penalize players that take longer then a half a tick
+            
+            #this variable makes sure both snakes can eat the same food at the same turn 
+            someone_ate_food = False
             for player in self.players:
-                self.update(player)
-        
+                if self.update(player) == AgentUpdate.ate_food:
+                    someone_ate_food = True
+            if someone_ate_food: 
+                self.generateFood()
+ 
             #print all the content in the screen
             if self.screen != None:
                 for player in self.players: #print players
