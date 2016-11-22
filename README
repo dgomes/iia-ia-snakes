@@ -1,3 +1,11 @@
+# Requirements:
+- Python 3.5 (carefull! 3.4 will not work!)
+- Create a virtualenv:
+    virtualenv -p /usr/bin/python3.5 venv
+    source venv/bin/activate
+- Install requirements.txt
+    pip install -r requirements.txt
+
 # Agent Class naming:
 
 The Student agent class must live in a file with the same name as the class, example:
