@@ -8,8 +8,10 @@ from sys import exit
 import pygame,random
 from pygame.locals import *
 from constants import *
-import logging
 from maze import Maze
+from netagent import NetAgent
+
+import logging
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG) 
 
@@ -24,6 +26,7 @@ class Player:
         self.head_color = (int(r+(255-r)*f), int(g+(255-g)*f), int(b+(255-b)*f))
         self.IsDead = False
         self.points = 0
+        self.latency = 2 #slack for students :)
     def kill(self):
         self.IsDead = True
         self.agent.IsDead = True
@@ -226,10 +229,15 @@ class SnakeGame:
             self.foodpos = random.choice(valid_neighbours)
 
             for player in [a for a in self.players if not a.IsDead]:
+                if player.name == "":
+                    sys.exit(1) #player couldn't be initialized
+                if isinstance(player.agent, NetAgent) and self.count%100==1:
+                    player.latency = player.agent.ping()
+
                 maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
                 s = pygame.time.get_ticks()
                 player.agent.updateDirection(maze) #update game logic (only for alive players)
-                f = pygame.time.get_ticks() - 200 #200ms bonus for network communications
+                f = pygame.time.get_ticks() - player.latency 
                 
                 if f-s > 1000*(1/self.fps)/2:
                     logging.debug("Player <{}> took {}".format(player.name, f-s))

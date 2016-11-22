@@ -32,7 +32,8 @@ async def agentserver(websocket, path):
         elif msg['cmd'] == 'PROXY':
             proxy[name] = websocket
             if agent[name] == None:
-                logging.error("Agent must connect before Proxy") 
+                logging.error("Agent must connect before Proxy")
+                proxy[name].send("CLOSE")
                 proxy[name].close()
                 return
             while True:

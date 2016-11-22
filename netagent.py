@@ -2,6 +2,9 @@ from snake import Snake
 from constants import *
 from websocket import create_connection
 import json
+import pygame
+import logging
+import sys
 
 class NetAgent(Snake):
     def __init__(self,body=[(0,0)] , direction=(1,0), name="network", url="ws://localhost:8765"):
@@ -10,6 +13,15 @@ class NetAgent(Snake):
         super().__init__(body,direction,name=name)
         self.ws.send(json.dumps({'cmd':'init', 'body':body, 'direction':direction}))
         self.name = self.ws.recv()
+        if self.name == "":
+            logging.error("Agent must connect before NetAgent")
+        
+    def ping(self):
+        s = pygame.time.get_ticks()
+        self.ws.send(json.dumps({'cmd':'ping'}))
+        self.ws.recv()
+        f = pygame.time.get_ticks()
+        return f-s
     def updateBody(self,body):
         self.ws.send(json.dumps({'cmd':'updateBody', 'body':body}))
     def update(self,points=None, mapsize=None, count=None,agent_time=None):
