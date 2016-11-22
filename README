@@ -1,4 +1,10 @@
-Network Game:
+# Agent Class naming:
+
+The Student agent class must live in a file with the same name as the class, example:
+
+StudentAgent -> studentagent.py
+
+# Network Game:
 
 A remote player (will not get video output) will play against a local player
 
