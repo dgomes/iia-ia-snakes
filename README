@@ -7,3 +7,6 @@ step 2: (REMOTE player being proxied) - python3 start.py -p -s Agent1,remoto,ws:
 step 3: (LOCAL player hosting the game) - python3 start.py -s Agent1,local -o NetAgent,remoto,ws://server:8765 
 
 Don't forget about firewalls and ports!
+
+There is a public server:  ws://barbrady.av.it.pt/snakes
+
