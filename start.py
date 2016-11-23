@@ -68,8 +68,9 @@ def main(argv):
                 StudentAgent([snake.playerPos()], name=studentAgent_name) if student_url == None else StudentAgent([snake.playerPos()], name=studentAgent_name, url=student_url),
                 OponentAgent([snake.playerPos()], name=oponentAgent_name) if oponent_url == None else OponentAgent([snake.playerPos()], name=oponentAgent_name, url=oponent_url),
             ])
-        except:
-            print("Missing parameters")
+        except Exception as e:
+            print(e)
+            sys.exit(1)
         
         snake.start()
 
