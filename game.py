@@ -171,8 +171,8 @@ class SnakeGame:
 
         head=snake.body[0]#head of snake
         if abs(snake.agent.direction[0]) > 1 or abs(snake.agent.direction[1]) > 1:
-            logging.error("{} tried to teleport -> DEAD".format(snake.agent.name))
             self.gameKill(snake)
+            logging.error("{} tried to teleport -> DEAD".format(snake.agent.name))
             return AgentUpdate.died
         head=(head[0]+snake.agent.direction[0],head[1]+snake.agent.direction[1])
         #wrap the snake around the window
@@ -183,10 +183,13 @@ class SnakeGame:
         alivelist=[alive for alive in reversed(self.players) if not alive.IsDead]
         for alive in alivelist:
             if head in alive.body:
-                if head == alive.body[0]:#in case of head to head collision, kill both of the snakes
-                    self.gameKill(alive)
+                if head == alive.body[0]: #in case of head to head collision, kill both of the snakes
+                    if snake.agent.name != alive.agent.name:
+                        logging.debug("{} crashed against {} -> BOTH DEAD".format(snake.agent.name, alive.agent.name))
+                        self.gameKill(alive)
+                    else:
+                        logging.debug("{} crashed against itself -> Suicide...".format(snake.agent.name))
                 self.gameKill(snake)
-                logging.debug("{} crashed against {} -> BOTH DEAD".format(snake.agent.name, alive.agent.name))
                 return AgentUpdate.died
         if head in self.obstacles:#hit an obstacle
             self.gameKill(snake)
