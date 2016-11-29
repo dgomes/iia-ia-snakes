@@ -1,4 +1,18 @@
-Network Game:
+# Requirements:
+- Python 3.5 (carefull! 3.4 will not work!)
+- Create a virtualenv:
+    virtualenv -p /usr/bin/python3.5 venv
+    source venv/bin/activate
+- Install requirements.txt
+    pip install -r requirements.txt
+
+# Agent Class naming:
+
+The Student agent class must live in a file with the same name as the class, example:
+
+StudentAgent -> studentagent.py
+
+# Network Game:
 
 A remote player (will not get video output) will play against a local player
 
@@ -7,3 +21,19 @@ step 2: (REMOTE player being proxied) - python3 start.py -p -s Agent1,remoto,ws:
 step 3: (LOCAL player hosting the game) - python3 start.py -s Agent1,local -o NetAgent,remoto,ws://server:8765 
 
 Don't forget about firewalls and ports!
+
+There is a public server:  ws://barbrady.av.it.pt/snakes
+
+# How to configure a remote repository (get updates from the teachers repository)
+
+Since you probably cloned the professors repository and created your own repository, you need to configure a a remote repository:
+
+    git remote add upstream https://code.ua.pt/git/iia-ia-snakes
+
+Now you can fetch from the upstream and merge with your repository:
+
+    git fetch upstream
+    git checkout master (or other branch)
+    git merge upstream/master (or other branch)
+
+
