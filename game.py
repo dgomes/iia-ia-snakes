@@ -64,9 +64,9 @@ class SnakeGame:
         
         self.playerpos=[]
         self.obstacles=[]
-        self.generateFood()
         self.fps=fps #frames per second. The higher, the harder
         self.setObstacles(obstacles, mapa)
+        self.generateFood()
 
     def generateFood(self):
         self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
