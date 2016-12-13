@@ -170,9 +170,9 @@ class SnakeGame:
         r = AgentUpdate.nothing
 
         head=snake.body[0]#head of snake
-        if abs(snake.agent.direction[0]) > 1 or abs(snake.agent.direction[1]) > 1:
+        if (abs(snake.agent.direction[0]) + abs(snake.agent.direction[1])) > 1:
             self.gameKill(snake)
-            logging.error("{} tried to teleport -> DEAD".format(snake.agent.name))
+            logging.error("{} tried to teleport or move diagonaly -> DEAD".format(snake.agent.name))
             return AgentUpdate.died
         head=(head[0]+snake.agent.direction[0],head[1]+snake.agent.direction[1])
         #wrap the snake around the window
