@@ -274,6 +274,9 @@ class SnakeGame:
             if self.screen != None:
                 pygame.display.update()
 
+        logging.info("GAME OVER")
+        for p in self.players:
+            p.agent.destroy()
 
         while self.screen != None:
             event = pygame.event.wait()
