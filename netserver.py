@@ -76,7 +76,7 @@ async def agentserver(websocket, path):
                 pass #ignore since both agents will try to insert the score
 
 if len(sys.argv) < 2:
-    print("Usage: python3 {} port_number".format(sys.argv[0]))
+    print("Usage: python3 {} port_number [game]".format(sys.argv[0]))
     sys.exit(1)
 start_server = websockets.serve(agentserver, port=int(sys.argv[1]))
 
