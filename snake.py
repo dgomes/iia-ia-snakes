@@ -9,6 +9,10 @@ class Snake:
         self.IsDead=False
         self.points = 0
         logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.DEBUG)
+    def ping(self):
+        pass #only used by netagent to measure latency between players
+    def destroy(self):
+        pass
     def updateBody(self, body):
         self.body = body
     def update(self,points=None, mapsize=None, count=None, agent_time=None):
