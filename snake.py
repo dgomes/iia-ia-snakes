@@ -2,7 +2,7 @@ from constants import *
 import logging
 
 class Snake:
-    def __init__(self, body, direction, name):
+    def __init__(self, body, direction, name, gameid=None):
         self.body=body #initially located here
         self.name=name
         self.direction=self.newdirection=direction
