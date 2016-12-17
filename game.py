@@ -69,7 +69,7 @@ class SnakeGame:
         self.foodfield=[]
         self.fps=fps #frames per second. The higher, the harder
         if not self.loadMap(mapa):
-            self.setObstacles(obstacles, mapa)
+            self.setObstacles(obstacles)
         self.generateFood()
 
     def generateFood(self):
