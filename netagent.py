@@ -15,7 +15,10 @@ class NetAgent(Snake):
         self.name = self.ws.recv()
         if self.name == "":
             logging.error("Agent must connect before NetAgent")
-        
+    def destroy(self):
+        logging.info("destroy")
+        self.ws.send(json.dumps({'cmd':'destroy'}))
+        self.ws.close()
     def ping(self):
         s = pygame.time.get_ticks()
         self.ws.send(json.dumps({'cmd':'ping'}))
