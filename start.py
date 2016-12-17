@@ -91,6 +91,10 @@ async def proxy(url, StudentAgent, agent_name):
             msg = json.loads(m)
             if msg['cmd'] == 'ping':
                 await websocket.send(json.dumps({}))
+            elif msg['cmd'] == 'destroy':
+                logging.info("GAME OVER")
+                websocket.close()
+                return
             elif msg['cmd'] == 'updateBody':
                 agent.updateBody([(b[0], b[1]) for b in msg['body']])
             elif msg['cmd'] == 'update':
