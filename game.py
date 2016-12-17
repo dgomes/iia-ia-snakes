@@ -1,6 +1,7 @@
 # Snake Game Version 1.0 
 # Initially based on the code provided by http://www.virtualanup.com at https://gist.githubusercontent.com/virtualanup/7254581/raw/d69804ce5b41f73aa847f4426098dca70b5a1294/snake2.py
 # Diogo Gomes <dgomes@av.it.pt>
+import uuid
 import copy
 import sys
 from collections import namedtuple
@@ -28,10 +29,11 @@ class Player:
         self.points = 0
         self.latency = 2 #slack for students :)
     def kill(self):
-        self.IsDead = True
-        self.agent.IsDead = True
-        self.point(-1000)
-        logging.info("Player <{}> died".format(self.name))
+        if not self.IsDead:
+            self.IsDead = True
+            self.agent.IsDead = True
+            self.point(-1000)
+            logging.info("Player <{}> died".format(self.name))
     def point(self, point):
         self.points+=point
         self.agent.points+=point
@@ -42,7 +44,7 @@ class SnakeGame:
         self.tilesize=tilesize  #tile size, adjust according to screen size
         self.hortiles=hor   #number of horizontal tiles
         self.verttiles=ver  #number of vertical tiles
-       
+        self.gameid=uuid.uuid4() 
         if mapa != None:
             image = pygame.image.load(mapa)
             pxarray = pygame.PixelArray(image)
@@ -158,7 +160,11 @@ class SnakeGame:
         for player in self.players:
             if not player.agent.IsDead:
                 self.playerpos+=player.body
-            player.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=self.count, agent_time=1000*(1/self.fps)/2) #update game logic (only for alive players)
+            try:
+                player.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=self.count, agent_time=1000*(1/self.fps)/2) #update game logic (only for alive players)
+            except Exception as error:
+                logging.error(str(error))
+                player.kill()
 
     def gameKill(self, snake):
        snake.kill()
@@ -202,8 +208,11 @@ class SnakeGame:
             r = AgentUpdate.ate_food
         #the snake hasnot collided....move along
         snake.body=[head]+snake.body[:-1]
-
-        snake.agent.updateBody(copy.deepcopy(snake.body))
+        try:
+            snake.agent.updateBody(copy.deepcopy(snake.body))
+        except Exception as error:
+            logging.error(str(error))
+            snake.kill()
         return r
     
     def start(self):
@@ -234,20 +243,23 @@ class SnakeGame:
             self.foodpos = random.choice(valid_neighbours)
 
             for player in [a for a in self.players if not a.IsDead]:
-                if player.name == "":
-                    sys.exit(1) #player couldn't be initialized
-                if isinstance(player.agent, NetAgent) and self.count%100==1:
-                    player.latency = player.agent.ping()
+                try:
+                    if player.name == "":
+                        sys.exit(1) #player couldn't be initialized
+                    if isinstance(player.agent, NetAgent) and self.count%100==1:
+                        player.latency = player.agent.ping()
 
-                maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
-                s = pygame.time.get_ticks()
-                player.latency = player.agent.updateDirection(maze) #update game logic (only for alive players)
-                f = pygame.time.get_ticks() - (player.latency if player.latency != None else 0)
+                    maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
+                    s = pygame.time.get_ticks()
+                    player.latency = player.agent.updateDirection(maze) #update game logic (only for alive players)
+                    f = pygame.time.get_ticks() - (player.latency if player.latency != None else 0)
                 
-                if f-s > 1000*(1/self.fps)/2:
-                    logging.debug("Player <{}> took {}".format(player.name, f-s))
-                    player.point(-10)   #we penalize players that take longer then a half a tick
-            
+                    if f-s > 1000*(1/self.fps)/2:
+                        logging.debug("Player <{}> took {}".format(player.name, f-s))
+                        player.point(-10)   #we penalize players that take longer then a half a tick
+                except Exception as error:
+                    logging.error(str(error))
+                    player.kill()
             #this variable makes sure both snakes can eat the same food at the same turn 
             someone_ate_food = False
             for player in self.players:
@@ -274,9 +286,12 @@ class SnakeGame:
             if self.screen != None:
                 pygame.display.update()
 
-        logging.info("GAME OVER")
+        logging.info("GAME OVER after {} counts".format(self.count))
         for p in self.players:
-            p.agent.destroy()
+            try:
+                p.agent.destroy()
+            except Exception as error:
+                logging.error(str(error))
 
         while self.screen != None:
             event = pygame.event.wait()
