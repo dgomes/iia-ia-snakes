@@ -14,8 +14,6 @@ from netagent import NetAgent
 
 import logging
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG) 
-
 class Player:
     def __init__(self, agent, color=(255,0,0)):
         self.agent = agent 
@@ -45,6 +43,8 @@ class SnakeGame:
         self.hortiles=hor   #number of horizontal tiles
         self.verttiles=ver  #number of vertical tiles
         self.gameid=uuid.uuid4() 
+        logging.basicConfig(format='%(levelname)s<{}>\t%(message)s'.format(self.gameid), level=logging.DEBUG) 
+
         if mapa != None:
             image = pygame.image.load(mapa)
             pxarray = pygame.PixelArray(image)
