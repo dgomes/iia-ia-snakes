@@ -191,7 +191,7 @@ class SnakeGame:
             if head in alive.body:
                 if head == alive.body[0]: #in case of head to head collision, kill both of the snakes
                     if snake.agent.name != alive.agent.name:
-                        logging.debug("{} crashed against {} -> BOTH DEAD".format(snake.agent.name, alive.agent.name))
+                        logging.debug("{} crashed against {} head -> BOTH DEAD".format(snake.agent.name, alive.agent.name))
                         self.gameKill(alive)
                     else:
                         logging.debug("{} crashed against itself -> Suicide...".format(snake.agent.name))
