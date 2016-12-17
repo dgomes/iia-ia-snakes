@@ -33,7 +33,8 @@ async def agentserver(websocket, path):
             if q.qsize() > 1:
                 p1 = q.get()
                 p2 = q.get()
-                subprocess.Popen("python3 start.py -s NetAgent,{},ws://localhost:{} -o NetAgent,{},ws://localhost:{} --disable-video".format(p1, sys.argv[1], p2, sys.argv[1]).split())
+                if len(sys.argv) > 2 and sys.argv[2] == "game":
+                    subprocess.Popen("python3 start.py -s NetAgent,{},ws://localhost:{} -o NetAgent,{},ws://localhost:{} --disable-video".format(p1, sys.argv[1], p2, sys.argv[1]).split())
             while True:
                 m = await agent[name].recv()
                 logging.debug("AGENT: {}".format(m))
@@ -66,11 +67,10 @@ async def agentserver(websocket, path):
             agent[name].close(1001,"Other end closed")
             agent[name] = None
         if score != None and gameid != None:   #we only commit score in one of the sides (else we would insert 2x)
-            logging.info(score)
             try:
                 c = conn.cursor()
                 c.execute('INSERT INTO scores (game, player1, player1_score, player2, player2_score) VALUES (?,?,?,?,?)', (gameid, score[0][0], score[0][1], score[1][0], score[1][1] ))
-                logging.info("{}({}) vs {}({})".format(score[0][0], score[0][1], score[1][0], score[1][1]))
+                logging.info("GAME<{}>\t{}({}) vs {}({})".format(gameid,score[0][0], score[0][1], score[1][0], score[1][1]))
                 conn.commit()
             except sqlite3.IntegrityError as error:
                 pass #ignore since both agents will try to insert the score
