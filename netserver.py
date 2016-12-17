@@ -6,7 +6,7 @@ import sys
 import logging
 import sqlite3
 
-logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.INFO)
+logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.DEBUG)
 proxy = dict() 
 agent = dict()
 conn = sqlite3.connect('scores.db')
@@ -47,9 +47,11 @@ async def agentserver(websocket, path):
                 await agent[name].send(m)
     except websockets.exceptions.ConnectionClosed as e:
         if name in proxy.keys() and proxy[name] != None:
+            logging.debug("{}(PROXY) : {}".format(name, str(e)))
             proxy[name].close(1001,"Other end closed")
             proxy[name] = None
         if name in agent.keys() and agent[name] != None:
+            logging.debug("{}(AGENT) : {}".format(name, str(e)))
             agent[name].close(1001,"Other end closed")
             agent[name] = None
         if score != None:
