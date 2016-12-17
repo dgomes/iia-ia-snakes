@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import subprocess
+import queue
 import asyncio
 import websockets
 import json
@@ -6,18 +8,20 @@ import sys
 import logging
 import sqlite3
 
-logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.INFO)
 proxy = dict() 
 agent = dict()
 conn = sqlite3.connect('scores.db')
-sql = "CREATE TABLE IF NOT EXISTS scores (id INTEGER PRIMARY KEY AUTOINCREMENT, t TIMESTAMP DEFAULT CURRENT_TIMESTAMP, player1 STRING, player1_score INTEGER, player2 STRING, player2_score INTEGER) ;"
+sql = "CREATE TABLE IF NOT EXISTS scores (game STRING PRIMARY KEY, t TIMESTAMP DEFAULT CURRENT_TIMESTAMP, player1 STRING, player1_score INTEGER, player2 STRING, player2_score INTEGER) ;"
 c = conn.cursor()
 c.execute(sql)
 conn.commit()
+q = queue.Queue()
 
 async def agentserver(websocket, path):
     global proxy, agent,conn
     score = None
+    gameid = None
     try:
         _msg = await websocket.recv()
         msg = json.loads(_msg)
@@ -25,12 +29,18 @@ async def agentserver(websocket, path):
         logging.info("INIT: {}".format(msg))
         if msg['cmd'] == "AGENT":
             agent[name] = websocket
+            q.put(name)
+            if q.qsize() > 1:
+                p1 = q.get()
+                p2 = q.get()
+                subprocess.Popen("python3 start.py -s NetAgent,{},ws://localhost:{} -o NetAgent,{},ws://localhost:{} --disable-video".format(p1, sys.argv[1], p2, sys.argv[1]).split())
             while True:
                 m = await agent[name].recv()
                 logging.debug("AGENT: {}".format(m))
                 await proxy[name].send(m)
         elif msg['cmd'] == 'PROXY':
             proxy[name] = websocket
+            gameid = msg['gameid']
             if agent[name] == None:
                 logging.error("Agent must connect before Proxy")
                 proxy[name].send("CLOSE")
@@ -52,13 +62,18 @@ async def agentserver(websocket, path):
             proxy[name] = None
         if name in agent.keys() and agent[name] != None:
             logging.debug("{}(AGENT) : {}".format(name, str(e)))
+            agent[name].send(json.dumps({'cmd':'destroy'}))
             agent[name].close(1001,"Other end closed")
             agent[name] = None
-        if score != None:
+        if score != None and gameid != None:   #we only commit score in one of the sides (else we would insert 2x)
             logging.info(score)
-            c = conn.cursor()
-            c.execute('INSERT INTO scores (player1, player1_score, player2, player2_score) VALUES (?,?,?,?)', (score[0][0], score[0][1], score[1][0], score[1][1] ))
-            conn.commit()
+            try:
+                c = conn.cursor()
+                c.execute('INSERT INTO scores (game, player1, player1_score, player2, player2_score) VALUES (?,?,?,?,?)', (gameid, score[0][0], score[0][1], score[1][0], score[1][1] ))
+                logging.info("{}({}) vs {}({})".format(score[0][0], score[0][1], score[1][0], score[1][1]))
+                conn.commit()
+            except sqlite3.IntegrityError as error:
+                pass #ignore since both agents will try to insert the score
 
 if len(sys.argv) < 2:
     print("Usage: python3 {} port_number".format(sys.argv[0]))
