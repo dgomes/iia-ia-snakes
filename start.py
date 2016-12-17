@@ -64,7 +64,7 @@ def main(argv):
     else:
         try:
             game=SnakeGame(hor=60, ver=40, fps=20, visual=visual, obstacles=15, mapa=inputfile)
-            print(game.gameid)
+            print("Launching game <{}>".format(game.gameid))
             game.setPlayers([  
                 StudentAgent([game.playerPos()], name=studentAgent_name, gameid=game.gameid) if student_url == None else StudentAgent([game.playerPos()], name=studentAgent_name, url=student_url,gameid=game.gameid),
                 OponentAgent([game.playerPos()], name=oponentAgent_name, gameid=game.gameid) if oponent_url == None else OponentAgent([game.playerPos()], name=oponentAgent_name, url=oponent_url,gameid=game.gameid),
