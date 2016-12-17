@@ -66,11 +66,19 @@ class SnakeGame:
         
         self.playerpos=[]
         self.obstacles=[]
+        self.foodfield=[]
         self.fps=fps #frames per second. The higher, the harder
-        self.setObstacles(obstacles, mapa)
+        if not self.loadMap(mapa):
+            self.setObstacles(obstacles, mapa)
         self.generateFood()
 
     def generateFood(self):
+        if len(self.foodfield) > 0:
+            self.foodpos=random.choice(self.foodfield)
+            while(self.foodpos in self.playerpos):
+                self.foodpos=random.choice(self.foodfield)
+            return
+
         self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
         while (self.foodpos in self.playerpos or self.foodpos in self.obstacles):
             self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
@@ -80,26 +88,31 @@ class SnakeGame:
         while (pos in self.obstacles):
             pos = random.randrange(1, self.hortiles), random.randrange(1, self.verttiles)
         return pos
-    
-    def setObstacles(self,level, filename=None):
+   
+    def loadMap(self, filename=None):
         if filename != None:
             image = pygame.image.load(filename)
             pxarray = pygame.PixelArray(image)
             for x in range(len(pxarray)):
                 for y in range(len(pxarray[x])):
-                    if pxarray[x][y] != 0:
+                    if pxarray[x][y] != 0 and pxarray[x][y] != 0xFF00F900:
                         self.obstacles.append((x, y))
-        else:
-            for i in range(1,level+1):
-                lo=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles) #last obstacle
-                self.obstacles.append(lo)
-                for j in range(1,random.randint(1,level)):
-                    if random.randint(1,2) == 1:
-                        lo=(lo[0]+1,lo[1])
-                    else:
-                        lo=(lo[0],lo[1]+1)
-                    if 0<=lo[0]<self.hortiles and 0<=lo[1]<self.verttiles :
-                        self.obstacles.append(lo)
+                    if pxarray[x][y] == 0xFF00F900:
+                        self.foodfield.append((x,y))
+            return True
+        return False
+
+    def setObstacles(self,level):
+        for i in range(1,level+1):
+            lo=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles) #last obstacle
+            self.obstacles.append(lo)
+            for j in range(1,random.randint(1,level)):
+                if random.randint(1,2) == 1:
+                    lo=(lo[0]+1,lo[1])
+                else:
+                    lo=(lo[0],lo[1]+1)
+                if 0<=lo[0]<self.hortiles and 0<=lo[1]<self.verttiles :
+                    self.obstacles.append(lo)
 
     def setPlayers(self,players):
         self.players=[]
