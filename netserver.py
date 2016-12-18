@@ -33,8 +33,10 @@ async def agentserver(websocket, path):
             if q.qsize() > 1:
                 p1 = q.get()
                 p2 = q.get()
-                if len(sys.argv) > 2 and sys.argv[2] == "game":
+	        if len(sys.argv) > 2 and sys.argv[2] == "game" and p1 != p2:
                     subprocess.Popen("python3 start.py -s NetAgent,{},ws://localhost:{} -o NetAgent,{},ws://localhost:{} --disable-video".format(p1, sys.argv[1], p2, sys.argv[1]).split())
+                if p1 == p2:
+                    q.put(p1) #put player back into queue
             while True:
                 m = await agent[name].recv()
                 logging.debug("AGENT: {}".format(m))
