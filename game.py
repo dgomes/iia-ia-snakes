@@ -103,13 +103,18 @@ class SnakeGame:
             for x in range(len(pxarray)):
                 for y in range(len(pxarray[x])):
                     p = pxarray[x][y] & 0xFFFFFFFF #fix signed/unsigned
-                    if not p in [0xFF00F900, 0xFFFF2600, 0xFFAA7942, 0xFF000000, 0xFFFFFFFF, 0]: #food, player, wall, oldwall, empty, oldempty 
+                    if p == 0xFF000000:
+                        p = 0xAA7942
+                    if p == 0:
+                        p = 0xFFFFFF
+                    p = p & 0xFFFFFF
+                    if not p in [0x00F900, 0xFF2600, 0xAA7942, 0x000000, 0xFFFFFF, 0]: #food, player, wall, oldwall, empty, oldempty 
                         logging.error("UNKNOWN: {:02X}".format(p))
-                    if p == 0xFF00F900:
+                    if p == 0x00F900:
                         self.foodfield.append((x,y))
-                    elif p == 0xFFFF2600:
+                    elif p == 0xFF2600:
                         self.playerfield.append((x,y))
-                    elif p in [0xFFAA7942, 0xFF000000]: 
+                    elif p == 0xAA7942: 
                         self.obstacles.append((x, y))
             return True
         return False
