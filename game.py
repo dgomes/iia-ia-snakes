@@ -97,10 +97,14 @@ class SnakeGame:
    
     def loadMap(self, filename=None):
         if filename != None:
+            logging.info("Loading {} ...".format(filenme))
             image = pygame.image.load(filename)
             pxarray = pygame.PixelArray(image)
             for x in range(len(pxarray)):
                 for y in range(len(pxarray[x])):
+                    p = pxarray[x][y]
+                    if not p in [0xFF00F900, 0xFFFF2600, 0, 0xFF000000]:
+                        logging.error("{:02X}".format(p))
                     if pxarray[x][y] == 0xFF00F900:
                         self.foodfield.append((x,y))
                     elif pxarray[x][y] == 0xFFFF2600:
