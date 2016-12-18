@@ -17,10 +17,12 @@ sql = "CREATE TABLE IF NOT EXISTS scores (game STRING PRIMARY KEY, t TIMESTAMP D
 c = conn.cursor()
 c.execute(sql)
 conn.commit()
+conn.close()
+
 q = queue.Queue()
 
 async def agentserver(websocket, path):
-    global proxy, agent,conn
+    global proxy, agent
     score = None
     gameid = None
     try:
@@ -72,10 +74,12 @@ async def agentserver(websocket, path):
             agent[name] = None
         if score != None and gameid != None:   #we only commit score in one of the sides (else we would insert 2x)
             try:
+                conn = sqlite3.connect('scores.db')
                 c = conn.cursor()
                 c.execute('INSERT INTO scores (game, player1, player1_score, player2, player2_score) VALUES (?,?,?,?,?)', (gameid, score[0][0], score[0][1], score[1][0], score[1][1] ))
                 logging.info("GAME<{}>\t{}({}) vs {}({})".format(gameid,score[0][0], score[0][1], score[1][0], score[1][1]))
                 conn.commit()
+                conn.close()
             except sqlite3.IntegrityError as error:
                 pass #ignore since both agents will try to insert the score
 
