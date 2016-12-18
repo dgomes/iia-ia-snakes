@@ -201,9 +201,11 @@ class SnakeGame:
         ping = player.agent.ping()
         player.latency = max(player.latency,ping) 
         s = pygame.time.get_ticks()
-        block(player) 
+        timespent = block(player) 
+        if timespent == None:
+            timespent = 0
         f = pygame.time.get_ticks() 
-#        logging.debug("({})\tLATENCY: {}\t\tPING: {}\t\ttime={}".format(player.name, player.latency, ping, f-s))
+        logging.debug("({})\tLATENCY: {}\t\tPING: {}\t\ttimedif={}\t\ttimespent={}".format(player.name, player.latency, ping, f-s,timespent))
         f = f - player.latency 
 
         if f-s > 1000*(1/self.fps)/2:
