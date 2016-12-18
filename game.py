@@ -109,7 +109,7 @@ class SnakeGame:
                         self.foodfield.append((x,y))
                     elif pxarray[x][y] == 0xFFFF2600:
                         self.playerfield.append((x,y))
-                    elif pxarray[x][y] != 0: 
+                    elif pxarray[x][y] != 0 and pxarray[x][y] != 0xFFFFFFFF: 
                         self.obstacles.append((x, y))
             return True
         return False
