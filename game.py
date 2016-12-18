@@ -205,9 +205,9 @@ class SnakeGame:
     def timekeep(self, player, block):
         s = pygame.time.get_ticks()
         timespent = block(player) 
-        if timespent == None:
-            timespent = 0
         f = pygame.time.get_ticks() 
+        if timespent == None:
+            timespent = f-s 
         if timespent > 0:
             logging.debug("({})\ttimedif={}\t\ttimespent={}".format(player.name, f-s,timespent))
 
