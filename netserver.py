@@ -44,7 +44,7 @@ async def agentserver(websocket, path):
         elif msg['cmd'] == 'PROXY':
             proxy[name] = websocket
             gameid = msg['gameid']
-            if agent[name] == None:
+            if name not in agent or agent[name] == None:
                 logging.error("Agent must connect before Proxy")
                 proxy[name].send("CLOSE")
                 proxy[name].close()
