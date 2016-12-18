@@ -87,6 +87,7 @@ async def proxy(url, StudentAgent, agent_name):
         agent = StudentAgent([(b[0], b[1]) for b in init['body']],(init['direction'][0], init['direction'][1]), name = agent_name)
         await websocket.send(agent.name)
 
+        clock = pygame.time.Clock()
         while True:
             m = await websocket.recv()
             msg = json.loads(m)
