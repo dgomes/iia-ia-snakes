@@ -102,14 +102,14 @@ class SnakeGame:
             pxarray = pygame.PixelArray(image)
             for x in range(len(pxarray)):
                 for y in range(len(pxarray[x])):
-                    p = pxarray[x][y]
-#                    if not p in [0xFF00F900, 0xFFFF2600, 0, 0xFF000000]:
-#                        logging.error("{:02X}".format(p))
-                    if pxarray[x][y] == 0xFF00F900:
+                    p = pxarray[x][y] & 0xFFFFFFFF #fix signed/unsigned
+                    if not p in [0xFF00F900, 0xFFFF2600, 0xFFAA7942, 0xFF000000, 0xFFFFFFFF, 0]: #food, player, wall, oldwall, empty, oldempty 
+                        logging.error("UNKNOWN: {:02X}".format(p))
+                    if p == 0xFF00F900:
                         self.foodfield.append((x,y))
-                    elif pxarray[x][y] == 0xFFFF2600:
+                    elif p == 0xFFFF2600:
                         self.playerfield.append((x,y))
-                    elif pxarray[x][y] != 0 and pxarray[x][y] != 0xFFFFFFFF: 
+                    elif p in [0xFFAA7942, 0xFF000000]: 
                         self.obstacles.append((x, y))
             return True
         return False
