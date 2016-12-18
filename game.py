@@ -67,6 +67,7 @@ class SnakeGame:
         self.playerpos=[]
         self.obstacles=[]
         self.foodfield=[]
+        self.playerfield=[]
         self.fps=fps #frames per second. The higher, the harder
         if not self.loadMap(mapa):
             self.setObstacles(obstacles)
@@ -84,6 +85,11 @@ class SnakeGame:
             self.foodpos=random.randrange(0,self.hortiles),random.randrange(0,self.verttiles)
 
     def playerPos(self):
+        if len(self.playerfield) > 0:
+            pos = random.choice([p for p in self.playerfield if not p in self.playerpos])
+            self.playerpos.append(pos)
+            return pos
+
         pos = random.randrange(1, self.hortiles), random.randrange(1, self.verttiles)
         while (pos in self.obstacles):
             pos = random.randrange(1, self.hortiles), random.randrange(1, self.verttiles)
@@ -95,10 +101,12 @@ class SnakeGame:
             pxarray = pygame.PixelArray(image)
             for x in range(len(pxarray)):
                 for y in range(len(pxarray[x])):
-                    if pxarray[x][y] != 0 and pxarray[x][y] != 0xFF00F900:
-                        self.obstacles.append((x, y))
                     if pxarray[x][y] == 0xFF00F900:
                         self.foodfield.append((x,y))
+                    elif pxarray[x][y] == 0xFFFF2600:
+                        self.playerfield.append((x,y))
+                    elif pxarray[x][y] != 0: 
+                        self.obstacles.append((x, y))
             return True
         return False
 
