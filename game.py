@@ -97,7 +97,7 @@ class SnakeGame:
    
     def loadMap(self, filename=None):
         if filename != None:
-            logging.info("Loading {} ...".format(filenme))
+            logging.info("Loading {} ...".format(filename))
             image = pygame.image.load(filename)
             pxarray = pygame.PixelArray(image)
             for x in range(len(pxarray)):
