@@ -24,6 +24,14 @@ Don't forget about firewalls and ports!
 
 There is a public server:  ws://barbrady.av.it.pt/snakes
 
+# Practice against other agents
+
+A game server has been setup where agent can meet dinamicaly and play against each other (no visual interface)
+
+just run the script: 
+
+treino.sh AgentClassName AgentName
+
 # How to configure a remote repository (get updates from the teachers repository)
 
 Since you probably cloned the professors repository and created your own repository, you need to configure a a remote repository:
