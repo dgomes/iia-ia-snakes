@@ -11,6 +11,7 @@ class Snake:
         logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.DEBUG)
     def ping(self):
         pass #only used by netagent to measure latency between players
+        return 0
     def destroy(self):
         pass
     def updateBody(self, body):
