@@ -9,7 +9,7 @@ import sys
 import logging
 import sqlite3
 
-logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO, datefmt='%m-%d %H:%M')
 proxy = dict() 
 agent = dict()
 conn = sqlite3.connect('scores.db')
