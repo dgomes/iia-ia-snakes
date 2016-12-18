@@ -10,16 +10,19 @@ class Snake:
         self.points = 0
         logging.basicConfig(format=':%(levelname)s:%(message)s', level=logging.DEBUG)
     def ping(self):
-        pass #only used by netagent to measure latency between players
+        #only used by netagent to measure latency between players
         return 0
     def destroy(self):
         pass
     def updateBody(self, body):
         self.body = body
+        return 0 #time took to update
     def update(self,points=None, mapsize=None, count=None, agent_time=None):
-        pass #send players stats about the game 
+        #send players stats about the game 
+        return 0 #time took to update
     def updateDirection(self,game):
         self.direction=self.newdirection #the next direction is stored in newdirection....logic is updated here
+        return 0 #time took to update
     def processkey(self,key):
         pass #nothing to do here it is just to support human players
 
