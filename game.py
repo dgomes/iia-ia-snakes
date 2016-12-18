@@ -25,7 +25,7 @@ class Player:
         self.head_color = (int(r+(255-r)*f), int(g+(255-g)*f), int(b+(255-b)*f))
         self.IsDead = False
         self.points = 0
-        self.latency = 2 #slack for students :)
+        self.latency = 0 
     def kill(self):
         if not self.IsDead:
             self.IsDead = True
@@ -199,17 +199,16 @@ class SnakeGame:
 
     def timekeep(self, player, block):
         ping = player.agent.ping()
-        player.latency = max(player.latency,ping) if player.latency != None else 0
+        player.latency = max(player.latency,ping) 
         s = pygame.time.get_ticks()
         block(player) 
         f = pygame.time.get_ticks() 
 #        logging.debug("({})\tLATENCY: {}\t\tPING: {}\t\ttime={}".format(player.name, player.latency, ping, f-s))
-        f = f - (player.latency if player.latency != None else 0)
+        f = f - player.latency 
 
         if f-s > 1000*(1/self.fps)/2:
             logging.debug("Player <{}> took {}".format(player.name, f-s))
             player.point(-10)   #we penalize players that take longer then a half a tick
-        
 
     def update(self,snake):
         #updates the snake...
