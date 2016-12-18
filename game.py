@@ -198,18 +198,16 @@ class SnakeGame:
        self.dead.append(snake)
 
     def timekeep(self, player, block):
-        ping = player.agent.ping()
-        player.latency = max(player.latency,ping) 
         s = pygame.time.get_ticks()
         timespent = block(player) 
         if timespent == None:
             timespent = 0
         f = pygame.time.get_ticks() 
-        logging.debug("({})\tLATENCY: {}\t\tPING: {}\t\ttimedif={}\t\ttimespent={}".format(player.name, player.latency, ping, f-s,timespent))
-        f = f - player.latency 
+        if timespent > 0:
+            logging.debug("({})\ttimedif={}\t\ttimespent={}".format(player.name, f-s,timespent))
 
-        if f-s > 1000*(1/self.fps)/2:
-            logging.debug("Player <{}> took {}".format(player.name, f-s))
+        if timespent > 1000*(1/self.fps)/2:
+            logging.debug("Player <{}> took {}".format(player.name, timespent))
             player.point(-10)   #we penalize players that take longer then a half a tick
 
     def update(self,snake):
