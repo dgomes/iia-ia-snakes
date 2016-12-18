@@ -33,5 +33,7 @@ class NetAgent(Snake):
     def updateDirection(self,maze):
         updateInfo = json.dumps({'cmd':'updateDirection', 'maze':maze.toNetwork()})
         self.ws.send(updateInfo)
-        newdir = self.ws.recv()
-        self.direction=json.loads(newdir)
+        reply = self.ws.recv()
+        replyDic = json.loads(reply)
+        self.direction=replyDic['direction']
+        return int(replyDic['stopwatch'])

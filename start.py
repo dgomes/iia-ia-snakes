@@ -104,8 +104,11 @@ async def proxy(url, StudentAgent, agent_name):
             elif msg['cmd'] == 'updateDirection':
                 maze = Maze(None, None, None) #create void maze before loading the real one
                 maze.fromNetwork(msg['maze'])
+                s = pygame.time.get_ticks()
                 agent.updateDirection(maze)
-                await websocket.send(json.dumps(agent.direction))
+                f = pygame.time.get_ticks()
+                updateDirectionJSON = json.dumps({"direction": agent.direction, "stopwatch": f-s})  
+                await websocket.send(updateDirectionJSON)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
