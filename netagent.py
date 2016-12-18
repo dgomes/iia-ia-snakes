@@ -32,9 +32,6 @@ class NetAgent(Snake):
         pass
     def updateDirection(self,maze):
         updateInfo = json.dumps({'cmd':'updateDirection', 'maze':maze.toNetwork()})
-        s = pygame.time.get_ticks()
         self.ws.send(updateInfo)
         newdir = self.ws.recv()
-        f = pygame.time.get_ticks()
         self.direction=json.loads(newdir)
-        return f-s 

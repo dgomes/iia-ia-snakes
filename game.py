@@ -186,7 +186,8 @@ class SnakeGame:
             if not player.agent.IsDead:
                 self.playerpos+=player.body
             try:
-                player.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=self.count, agent_time=1000*(1/self.fps)/2) #update game logic (only for alive players)
+                b = lambda x: x.agent.update(points=[(a.name, a.points) for a in self.players], mapsize=(self.hortiles, self.verttiles), count=self.count, agent_time=1000*(1/self.fps)/2) #update game logic (only for alive players)
+                self.timekeep(player, b)
             except Exception as error:
                 logging.error(str(error))
                 player.kill()
@@ -195,6 +196,20 @@ class SnakeGame:
        snake.kill()
        self.updatePlayerInfo()
        self.dead.append(snake)
+
+    def timekeep(self, player, block):
+        ping = player.agent.ping()
+        player.latency = max(player.latency,ping)
+        s = pygame.time.get_ticks()
+        block(player) 
+        f = pygame.time.get_ticks() 
+        logging.debug("({})\tLATENCY: {}\t\tPING: {}\t\ttime={}".format(player.name, player.latency, ping, f-s))
+        f = f - (player.latency if player.latency != None else 0)
+
+        if f-s > 1000*(1/self.fps)/2:
+            logging.debug("Player <{}> took {}".format(player.name, f-s))
+            player.point(-10)   #we penalize players that take longer then a half a tick
+        
 
     def update(self,snake):
         #updates the snake...
@@ -271,17 +286,10 @@ class SnakeGame:
                 try:
                     if player.name == "":
                         sys.exit(1) #player couldn't be initialized
-                    if isinstance(player.agent, NetAgent) and self.count%100==1:
-                        player.latency = player.agent.ping()
 
                     maze = Maze(self.obstacles, self.playerpos, self.foodpos)   #just a copy of our information (avoid shameful agents that tinker with the game server)
-                    s = pygame.time.get_ticks()
-                    player.latency = player.agent.updateDirection(maze) #update game logic (only for alive players)
-                    f = pygame.time.get_ticks() - (player.latency if player.latency != None else 0)
-                
-                    if f-s > 1000*(1/self.fps)/2:
-                        logging.debug("Player <{}> took {}".format(player.name, f-s))
-                        player.point(-10)   #we penalize players that take longer then a half a tick
+                    b = lambda x: x.agent.updateDirection(maze)
+                    self.timekeep(player, b)
                 except Exception as error:
                     logging.error(str(error))
                     player.kill()
