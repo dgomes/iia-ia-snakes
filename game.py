@@ -199,7 +199,7 @@ class SnakeGame:
 
     def timekeep(self, player, block):
         ping = player.agent.ping()
-        player.latency = max(player.latency,ping)
+        player.latency = max(player.latency,ping) if player.latency != None else 0
         s = pygame.time.get_ticks()
         block(player) 
         f = pygame.time.get_ticks() 
