@@ -20,20 +20,23 @@ def main(argv):
     studentAgent_name = "Agent1"
     student_url = None
     OponentAgent = Agent1
-    oponentAgent_name = "Agent1"
+    oponentAgent_name = "Agent2"
     oponent_url = None
+    timeout = sys.maxsize
     try:
-        opts, args = getopt.getopt(argv,"hm:s:o:p",["help","map=","disable-video","student-agent=","oponent-agent=","proxy"])
+        opts, args = getopt.getopt(argv,"hm:s:o:pt:",["help","map=","disable-video","student-agent","oponent-agent","proxy","timeout"])
     except getopt.GetoptError as e:
         print(e)
-        print('start.py [-h/--help -m/--map <mapfile> --disable-video -p/--proxy -s/--student-agent AgentName,Name[,websocket] -o/--oponent-name AgentName,Name[,websocket]]')
+        print('start.py [-h/--help -m/--map <mapfile> --disable-video -p/--proxy -s/--student-agent AgentName,Name[,websocket] -o/--oponent-name AgentName,Name[,websocket] --timeout]')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('start.py [-h/--help -m/--map <mapfile> --disable-video -p/--proxy -s/--student-agent AgentName,Name[,websocket] -o/--oponent-name AgentName,Name[,websocket]]')
+            print('start.py [-h/--help -m/--map <mapfile> --disable-video -p/--proxy -s/--student-agent AgentName,Name[,websocket] -o/--oponent-name AgentName,Name[,websocket] --timeout]')
             sys.exit()
         elif opt in ("-m", "--map"):
             inputfile = arg
+        elif opt in ("-t", "--timeout"):
+            timeout = int(arg)
         elif opt in ("--disable-video"):
             visual = False 
         elif opt in ("-p", "--proxy"):
@@ -63,7 +66,7 @@ def main(argv):
         asyncio.get_event_loop().run_until_complete(proxy(student_url,StudentAgent, studentAgent_name))
     else:
         try:
-            game=SnakeGame(hor=60, ver=40, fps=20, visual=visual, obstacles=15, mapa=inputfile)
+            game=SnakeGame(hor=60, ver=40, fps=20, visual=visual, obstacles=15, mapa=inputfile, timeout=timeout)
             print("Launching game <{}>".format(game.gameid))
             game.setPlayers([  
                 StudentAgent([game.playerPos()], name=studentAgent_name) if student_url == None else StudentAgent([game.playerPos()], name=studentAgent_name, url=student_url,gameid=game.gameid),

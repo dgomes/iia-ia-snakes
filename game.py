@@ -38,10 +38,11 @@ class Player:
         logging.info("Player <{}> points: {}".format(self.name, self.points))
 
 class SnakeGame:
-    def __init__(self, hor=60, ver=40, tilesize=20, fps=50, visual=False, obstacles=15, mapa=None):
+    def __init__(self, hor=60, ver=40, tilesize=20, fps=50, visual=False, obstacles=15, mapa=None, timeout=sys.maxsize):
         self.tilesize=tilesize  #tile size, adjust according to screen size
         self.hortiles=hor   #number of horizontal tiles
         self.verttiles=ver  #number of vertical tiles
+        self.timeout=timeout #maximum number of cycles 
         self.gameid=uuid.uuid4() 
         logging.basicConfig(format='%(levelname)s<{}>\t%(message)s'.format(self.gameid), level=logging.DEBUG) 
 
@@ -149,7 +150,7 @@ class SnakeGame:
         players = [PlayerStat(p.name, p.color, p.points) for p in self.players + self.dead]
       
         score = "{} vs {}".format(players[0].points, players[1].points)
-        if self.screen == None and self.count % self.fps == 0:
+        if self.screen == None and (self.count % self.fps == 0 or self.count >= self.timeout):
             logging.info("{} {} {}".format(players[0].name, score, players[1].name))
         elif self.screen != None:
             text = self.font.render(score, 1,(255,255,255))
@@ -208,11 +209,10 @@ class SnakeGame:
         f = pygame.time.get_ticks() 
         if timespent == None:
             timespent = f-s 
-        if timespent > 0:
-            logging.debug("({})\ttimedif={}\t\ttimespent={}".format(player.name, f-s,timespent))
 
         if timespent > 1000*(1/self.fps)/2:
-            logging.debug("Player <{}> took {}".format(player.name, timespent))
+            logging.debug("({})\ttimedif={}\t\ttimespent={}".format(player.name, f-s,timespent))
+            logging.info("Player <{}> took {}".format(player.name, timespent))
             player.point(-10)   #we penalize players that take longer then a half a tick
 
     def update(self,snake):
@@ -253,7 +253,8 @@ class SnakeGame:
         #the snake hasnot collided....move along
         snake.body=[head]+snake.body[:-1]
         try:
-            snake.agent.updateBody(copy.deepcopy(snake.body))
+            b = lambda x: x.agent.updateBody(copy.deepcopy(x.body))
+            self.timekeep(snake, b)
         except Exception as error:
             logging.error(str(error))
             snake.kill()
@@ -262,7 +263,7 @@ class SnakeGame:
     def start(self):
         clock = pygame.time.Clock()
         self.count=0
-        while len([p for p in self.players if not p.IsDead]) > 1:
+        while len([p for p in self.players if not p.IsDead]) > 1 and self.count < self.timeout :
             clock.tick(self.fps)
             if self.screen != None:
                 for event in pygame.event.get():
@@ -324,6 +325,7 @@ class SnakeGame:
                 pygame.display.update()
 
         logging.info("GAME OVER after {} counts".format(self.count))
+        #print(max(self.players, key=lambda p: p.points).name)
         for p in self.players:
             try:
                 p.agent.destroy()
