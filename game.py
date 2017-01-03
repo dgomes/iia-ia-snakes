@@ -140,8 +140,11 @@ class SnakeGame:
             colors = colours
 
         for p in players:
-            c = random.choice(colors)
-            colors.remove(c)
+            if len(colors):
+                c = random.choice(colors)
+                colors.remove(c)
+            else:
+                c = (random.randint(1,254), random.randint(1,254), random.randint(1,254))
             self.players+=[Player(p,c)]
         self.dead=[]
 
@@ -327,7 +330,10 @@ class SnakeGame:
             if self.screen != None:
                 pygame.display.update()
 
-        logging.info("GAME OVER after {} counts".format(self.count))
+        if self.count >= self.timeout:
+            logging.critical("GAME OVER BY TIMEOUT after {} counts".format(self.count))
+        else:
+            logging.info("GAME OVER after {} counts".format(self.count))
         #print(max(self.players, key=lambda p: p.points).name)
         for p in self.players:
             try:
