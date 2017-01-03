@@ -73,7 +73,7 @@ def main(argv):
                 OponentAgent([game.playerPos()], name=oponentAgent_name) if oponent_url == None else OponentAgent([game.playerPos()], name=oponentAgent_name, url=oponent_url,gameid=game.gameid),
             ])
         except Exception as e:
-            print(e)
+            logging.exception(e)
             sys.exit(1)
         
         game.start()
@@ -90,30 +90,37 @@ async def proxy(url, StudentAgent, agent_name):
         agent = StudentAgent([(b[0], b[1]) for b in init['body']],(init['direction'][0], init['direction'][1]), name = agent_name)
         await websocket.send(agent.name)
 
-        clock = pygame.time.Clock()
-        while True:
-            m = await websocket.recv()
-            msg = json.loads(m)
-            if msg['cmd'] == 'ping':
-                await websocket.send(json.dumps({}))
-            elif msg['cmd'] == 'destroy':
-                logging.info("GAME OVER")
-                websocket.close()
-                return
-            elif msg['cmd'] == 'updateBody':
-                agent.updateBody([(b[0], b[1]) for b in msg['body']])
-            elif msg['cmd'] == 'update':
-                logging.info(msg['points'])
-                agent.update(points=[(p[0], p[1]) for p in msg['points']], mapsize=(msg['mapsize'][0],msg['mapsize'][1]), count=msg['count'], agent_time=msg['agent_time'])
-            elif msg['cmd'] == 'updateDirection':
-                maze = Maze(None, None, None) #create void maze before loading the real one
-                maze.fromNetwork(msg['maze'])
-                s = pygame.time.get_ticks()
-                agent.updateDirection(maze)
-                f = pygame.time.get_ticks()
-                updateDirectionJSON = json.dumps({"direction": agent.direction, "stopwatch": f-s})  
-                await websocket.send(updateDirectionJSON)
-
+        try:
+            clock = pygame.time.Clock()
+            while True:
+                m = await websocket.recv()
+                msg = json.loads(m)
+                if msg['cmd'] == 'ping':
+                    await websocket.send(json.dumps({}))
+                elif msg['cmd'] == 'destroy':
+                    logging.info("GAME OVER")
+                    websocket.close()
+                    return
+                elif msg['cmd'] == 'updateBody':
+                    agent.updateBody([(b[0], b[1]) for b in msg['body']])
+                elif msg['cmd'] == 'update':
+                    logging.info(msg['points'])
+                    agent.update(points=[(p[0], p[1]) for p in msg['points']], mapsize=(msg['mapsize'][0],msg['mapsize'][1]), count=msg['count'], agent_time=msg['agent_time'])
+                elif msg['cmd'] == 'updateDirection':
+                    maze = Maze(None, None, None) #create void maze before loading the real one
+                    maze.fromNetwork(msg['maze'])
+                    s = pygame.time.get_ticks()
+                    agent.updateDirection(maze)
+                    f = pygame.time.get_ticks()
+                    updateDirectionJSON = json.dumps({"direction": agent.direction, "stopwatch": f-s})  
+                    await websocket.send(updateDirectionJSON)
+    
+        except Exception as e:
+            await websocket.send(json.dumps({}))
+            await websocket.close()
+            logging.exception(e)
+            return
+  
 if __name__ == "__main__":
    main(sys.argv[1:])
 
