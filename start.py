@@ -24,7 +24,7 @@ def main(argv):
     oponent_url = None
     timeout = sys.maxsize
     try:
-        opts, args = getopt.getopt(argv,"hm:s:o:pt:",["help","map=","disable-video","student-agent","oponent-agent","proxy","timeout"])
+        opts, args = getopt.getopt(argv,"hm:s:o:pt:",["help","map=","disable-video","student-agent","oponent-agent","proxy","timeout="])
     except getopt.GetoptError as e:
         print(e)
         print('start.py [-h/--help -m/--map <mapfile> --disable-video -p/--proxy -s/--student-agent AgentName,Name[,websocket] -o/--oponent-name AgentName,Name[,websocket] --timeout]')
