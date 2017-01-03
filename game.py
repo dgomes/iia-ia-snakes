@@ -44,7 +44,7 @@ class SnakeGame:
         self.verttiles=ver  #number of vertical tiles
         self.timeout=timeout #maximum number of cycles 
         self.gameid=uuid.uuid4() 
-        logging.basicConfig(format='%(levelname)s<{}>\t%(message)s'.format(self.gameid), level=logging.DEBUG) 
+        logging.basicConfig(format='%(levelname)s<{}>\t%(message)s'.format(self.gameid), level=logging.WARN) 
 
         if mapa != None:
             image = pygame.image.load(mapa)
@@ -214,7 +214,9 @@ class SnakeGame:
             logging.debug("({})\ttimedif={}\t\ttimespent={}".format(player.name, f-s,timespent))
             logging.info("Player <{}> took {}".format(player.name, timespent))
             player.point(-10)   #we penalize players that take longer then a half a tick
-
+        if timespent > 200*1000*(1/self.fps)/2: # 200x past the time is a sucker... just kill it
+            player.kill()
+ 
     def update(self,snake):
         #updates the snake...
         r = AgentUpdate.nothing
