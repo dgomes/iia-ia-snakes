@@ -1,3 +1,7 @@
+# Snakes Clone
+
+![Demo](https://github.com/dgomes/iia-ia-snakes/raw/master/Screenshot%202019-11-14%20at%2015.46.26.png)
+
 # Requirements:
 - Python 3.5 (carefull! 3.4 will not work!)
 - Create a virtualenv:
